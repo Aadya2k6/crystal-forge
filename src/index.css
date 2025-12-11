@@ -1,79 +1,89 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Crystal Code Hackathon - Cyber-Winter Void Design System */
+/* Crystal Code Hackathon - Luminous Ice / Ethereal Glacier Design System */
 
 @layer base {
   :root {
-    /* Cosmic Void Palette */
-    --background: 230 50% 5%;
-    --foreground: 200 100% 95%;
+    /* Luminous Ice Palette - LIGHT THEME */
+    --background: 186 100% 94%;
+    --foreground: 199 89% 20%;
     
-    --void-deep: 230 60% 4%;
-    --void-mid: 225 50% 8%;
-    --void-glow: 220 40% 12%;
+    /* Glacial Gradient Colors */
+    --glacier-light: 186 100% 94%;
+    --glacier-mid: 187 71% 80%;
+    --glacier-deep: 186 76% 16%;
+    --ocean-deep: 186 100% 20%;
     
     /* Ice Crystal Colors */
-    --ice-primary: 185 100% 50%;
-    --ice-secondary: 200 100% 60%;
-    --ice-glow: 185 100% 70%;
-    --ice-frost: 200 30% 90%;
+    --ice-clear: 186 100% 97%;
+    --ice-frost: 186 40% 95%;
+    --ice-blue: 195 100% 70%;
+    --ice-cyan: 185 100% 50%;
+    --ice-diamond: 0 0% 100%;
     
-    /* Neon Accents */
-    --neon-cyan: 185 100% 50%;
-    --neon-blue: 210 100% 60%;
-    --neon-purple: 270 100% 70%;
-    --neon-white: 200 100% 95%;
+    /* Holographic Accents */
+    --holo-pink: 320 80% 75%;
+    --holo-purple: 270 80% 75%;
+    --holo-cyan: 185 100% 75%;
+    --holo-blue: 210 100% 70%;
     
     /* UI Components */
-    --card: 220 50% 8%;
-    --card-foreground: 200 100% 95%;
+    --card: 186 60% 98%;
+    --card-foreground: 199 89% 20%;
     
-    --popover: 220 50% 8%;
-    --popover-foreground: 200 100% 95%;
+    --popover: 186 60% 98%;
+    --popover-foreground: 199 89% 20%;
     
-    --primary: 185 100% 50%;
-    --primary-foreground: 230 50% 5%;
+    --primary: 186 100% 35%;
+    --primary-foreground: 0 0% 100%;
     
-    --secondary: 220 40% 15%;
-    --secondary-foreground: 200 100% 95%;
+    --secondary: 186 40% 90%;
+    --secondary-foreground: 199 89% 20%;
     
-    --muted: 220 30% 20%;
-    --muted-foreground: 200 30% 60%;
+    --muted: 186 30% 85%;
+    --muted-foreground: 199 50% 40%;
     
     --accent: 185 100% 50%;
-    --accent-foreground: 230 50% 5%;
+    --accent-foreground: 199 89% 15%;
     
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 200 30% 20%;
-    --input: 220 40% 12%;
+    --success: 160 70% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 45 90% 55%;
+    --warning-foreground: 45 90% 20%;
+    
+    --border: 186 50% 85%;
+    --input: 186 60% 98%;
     --ring: 185 100% 50%;
     
-    --radius: 0.75rem;
+    --radius: 1rem;
     
-    /* Glass Properties */
-    --glass-bg: 220 50% 10%;
-    --glass-border: 200 50% 30%;
+    /* Glass Properties - LIGHT ICE */
+    --glass-bg: 0 0% 100%;
+    --glass-border: 185 100% 85%;
     --glass-blur: 20px;
+    --glass-opacity: 0.7;
     
-    /* Glow Effects */
-    --glow-primary: 0 0 30px hsl(185 100% 50% / 0.5);
-    --glow-secondary: 0 0 60px hsl(185 100% 50% / 0.3);
-    --glow-intense: 0 0 100px hsl(185 100% 50% / 0.6);
+    /* Glow Effects - CYAN/BLUE, not black */
+    --glow-soft: 0 8px 32px hsl(185 100% 50% / 0.15);
+    --glow-medium: 0 12px 48px hsl(185 100% 50% / 0.25);
+    --glow-intense: 0 20px 60px hsl(185 100% 50% / 0.35);
     
     /* Sidebar */
-    --sidebar-background: 220 50% 6%;
-    --sidebar-foreground: 200 100% 95%;
-    --sidebar-primary: 185 100% 50%;
-    --sidebar-primary-foreground: 230 50% 5%;
-    --sidebar-accent: 220 40% 15%;
-    --sidebar-accent-foreground: 200 100% 95%;
-    --sidebar-border: 200 30% 20%;
+    --sidebar-background: 186 60% 98%;
+    --sidebar-foreground: 199 89% 20%;
+    --sidebar-primary: 186 100% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 186 40% 92%;
+    --sidebar-accent-foreground: 199 89% 20%;
+    --sidebar-border: 186 50% 85%;
     --sidebar-ring: 185 100% 50%;
   }
 }
@@ -89,218 +99,235 @@
   
   body {
     @apply bg-background text-foreground;
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Inter', sans-serif;
     overflow-x: hidden;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
   }
 }
 
 @layer components {
-  /* Glassmorphism Card */
-  .glass-card {
-    @apply relative overflow-hidden rounded-xl;
+  /* Pure Ice Glass Card - Bright and Clear */
+  .glass-ice {
+    @apply relative overflow-hidden rounded-2xl;
     background: linear-gradient(
       135deg,
-      hsl(var(--glass-bg) / 0.6) 0%,
-      hsl(var(--glass-bg) / 0.3) 100%
+      hsl(var(--glass-bg) / 0.85) 0%,
+      hsl(var(--glass-bg) / 0.6) 100%
     );
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid hsl(var(--glass-border) / 0.3);
+    border: 1px solid hsl(var(--glass-border) / 0.6);
     box-shadow: 
-      inset 0 1px 1px hsl(var(--ice-frost) / 0.1),
-      0 10px 40px hsl(var(--void-deep) / 0.5);
+      var(--glow-soft),
+      inset 0 1px 1px hsl(0 0% 100% / 0.8),
+      inset 0 -1px 1px hsl(185 100% 50% / 0.1);
   }
   
-  .glass-card::before {
+  .glass-ice::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.03;
+    background: linear-gradient(
+      135deg,
+      hsl(0 0% 100% / 0.4) 0%,
+      transparent 50%,
+      hsl(185 100% 90% / 0.2) 100%
+    );
     pointer-events: none;
   }
   
-  .glass-card-glow {
-    @apply glass-card;
+  /* Diamond Glass - Extra Sparkle */
+  .glass-diamond {
+    @apply glass-ice;
     box-shadow: 
-      inset 0 1px 1px hsl(var(--ice-frost) / 0.1),
-      0 10px 40px hsl(var(--void-deep) / 0.5),
-      0 0 30px hsl(var(--ice-primary) / 0.15);
+      var(--glow-medium),
+      inset 0 2px 4px hsl(0 0% 100% / 0.9),
+      inset 0 -2px 4px hsl(185 100% 50% / 0.1);
   }
   
-  /* Neon Glow Text */
-  .text-glow {
-    text-shadow: 
-      0 0 10px hsl(var(--ice-primary) / 0.8),
-      0 0 30px hsl(var(--ice-primary) / 0.6),
-      0 0 60px hsl(var(--ice-primary) / 0.4);
-  }
-  
-  .text-glow-intense {
-    text-shadow: 
-      0 0 10px hsl(var(--ice-primary) / 1),
-      0 0 30px hsl(var(--ice-primary) / 0.8),
-      0 0 60px hsl(var(--ice-primary) / 0.6),
-      0 0 100px hsl(var(--ice-primary) / 0.4);
-  }
-  
-  /* Glowing Border */
-  .glow-border {
-    @apply relative;
-    border: 1px solid hsl(var(--ice-primary) / 0.5);
-    box-shadow: 
-      inset 0 0 20px hsl(var(--ice-primary) / 0.1),
-      0 0 20px hsl(var(--ice-primary) / 0.3);
-  }
-  
-  .glow-border::after {
+  .glass-diamond::after {
     content: '';
     position: absolute;
-    inset: -1px;
-    border-radius: inherit;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
     background: linear-gradient(
-      135deg,
-      hsl(var(--ice-primary) / 0.5) 0%,
-      transparent 50%,
-      hsl(var(--ice-secondary) / 0.3) 100%
+      90deg,
+      transparent 0%,
+      hsl(0 0% 100% / 0.4) 50%,
+      transparent 100%
     );
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    -webkit-mask-composite: xor;
-    padding: 1px;
+    animation: shimmer 3s ease-in-out infinite;
     pointer-events: none;
   }
   
-  /* Ice Button */
-  .btn-ice {
-    @apply relative px-8 py-4 font-orbitron font-semibold tracking-wider uppercase;
-    @apply rounded-lg overflow-hidden transition-all duration-300;
-    background: linear-gradient(
-      135deg,
-      hsl(var(--ice-primary) / 0.2) 0%,
-      hsl(var(--ice-secondary) / 0.1) 100%
-    );
-    border: 1px solid hsl(var(--ice-primary) / 0.6);
-    color: hsl(var(--ice-glow));
-    box-shadow: 
-      0 0 20px hsl(var(--ice-primary) / 0.3),
-      inset 0 0 20px hsl(var(--ice-primary) / 0.1);
+  /* Frost Overlay */
+  .frost-texture {
+    @apply pointer-events-none absolute inset-0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='frost'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23frost)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    mix-blend-mode: overlay;
   }
   
-  .btn-ice:hover {
+  /* Ice Button - Gemstone Style */
+  .btn-crystal {
+    @apply relative px-8 py-4 font-space font-semibold tracking-wide;
+    @apply rounded-xl overflow-hidden transition-all duration-300;
     background: linear-gradient(
       135deg,
-      hsl(var(--ice-primary) / 0.4) 0%,
-      hsl(var(--ice-secondary) / 0.2) 100%
+      hsl(185 100% 50%) 0%,
+      hsl(195 100% 45%) 50%,
+      hsl(205 100% 55%) 100%
     );
+    color: white;
+    border: 1px solid hsl(185 100% 70% / 0.5);
     box-shadow: 
-      0 0 40px hsl(var(--ice-primary) / 0.5),
-      0 0 80px hsl(var(--ice-primary) / 0.3),
-      inset 0 0 30px hsl(var(--ice-primary) / 0.2);
-    transform: translateY(-2px);
+      0 4px 20px hsl(185 100% 50% / 0.4),
+      inset 0 2px 4px hsl(0 0% 100% / 0.3);
+    text-shadow: 0 1px 2px hsl(185 100% 20% / 0.3);
   }
   
-  .btn-ice::before {
+  .btn-crystal:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+      0 8px 30px hsl(185 100% 50% / 0.5),
+      0 4px 15px hsl(185 100% 50% / 0.3),
+      inset 0 2px 4px hsl(0 0% 100% / 0.4);
+  }
+  
+  .btn-crystal::before {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(
       90deg,
       transparent 0%,
-      hsl(var(--ice-frost) / 0.2) 50%,
+      hsl(0 0% 100% / 0.3) 50%,
       transparent 100%
     );
     transform: translateX(-100%);
     transition: transform 0.6s ease;
   }
   
-  .btn-ice:hover::before {
+  .btn-crystal:hover::before {
     transform: translateX(100%);
   }
   
-  /* Input Ice Style */
-  .input-ice {
-    @apply w-full px-4 py-3 rounded-lg font-rajdhani text-lg;
-    @apply transition-all duration-300 outline-none;
-    background: hsl(var(--void-mid) / 0.8);
-    border: 1px solid hsl(var(--glass-border) / 0.3);
-    color: hsl(var(--foreground));
+  /* Secondary Crystal Button */
+  .btn-crystal-secondary {
+    @apply relative px-6 py-3 font-space font-medium tracking-wide;
+    @apply rounded-xl overflow-hidden transition-all duration-300;
+    background: hsl(var(--glass-bg) / 0.8);
+    color: hsl(var(--primary));
+    border: 2px solid hsl(185 100% 50% / 0.4);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--glow-soft);
   }
   
-  .input-ice::placeholder {
+  .btn-crystal-secondary:hover {
+    background: hsl(185 100% 50% / 0.1);
+    border-color: hsl(185 100% 50% / 0.6);
+    transform: translateY(-2px);
+    box-shadow: var(--glow-medium);
+  }
+  
+  /* Ice Input */
+  .input-frost {
+    @apply w-full px-5 py-4 rounded-xl font-inter text-base;
+    @apply transition-all duration-300 outline-none;
+    background: hsl(var(--glass-bg) / 0.9);
+    border: 2px solid hsl(var(--glass-border) / 0.5);
+    color: hsl(var(--foreground));
+    box-shadow: inset 0 2px 4px hsl(185 100% 50% / 0.05);
+  }
+  
+  .input-frost::placeholder {
     color: hsl(var(--muted-foreground));
   }
   
-  .input-ice:focus {
-    border-color: hsl(var(--ice-primary));
+  .input-frost:focus {
+    border-color: hsl(185 100% 50%);
     box-shadow: 
-      0 0 20px hsl(var(--ice-primary) / 0.4),
-      inset 0 0 10px hsl(var(--ice-primary) / 0.1);
+      0 0 0 4px hsl(185 100% 50% / 0.15),
+      inset 0 2px 4px hsl(185 100% 50% / 0.05);
   }
   
-  /* Frost Noise Overlay */
-  .frost-overlay {
-    @apply pointer-events-none absolute inset-0;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.02;
+  /* Holographic Effect */
+  .holographic {
+    background: linear-gradient(
+      135deg,
+      hsl(320 80% 75% / 0.3) 0%,
+      hsl(270 80% 75% / 0.3) 25%,
+      hsl(185 100% 75% / 0.3) 50%,
+      hsl(210 100% 70% / 0.3) 75%,
+      hsl(320 80% 75% / 0.3) 100%
+    );
+    background-size: 400% 400%;
+    animation: holo-shift 8s ease infinite;
+  }
+  
+  /* Text Glow - Light Theme */
+  .text-glow-cyan {
+    text-shadow: 
+      0 0 20px hsl(185 100% 50% / 0.5),
+      0 0 40px hsl(185 100% 50% / 0.3);
   }
 }
 
 @layer utilities {
-  .font-orbitron {
-    font-family: 'Orbitron', sans-serif;
+  .font-space {
+    font-family: 'Space Grotesk', sans-serif;
   }
   
-  .font-rajdhani {
-    font-family: 'Rajdhani', sans-serif;
+  .font-inter {
+    font-family: 'Inter', sans-serif;
   }
   
-  /* Cosmic Gradient */
-  .bg-cosmic {
+  /* Glacial Gradient Background */
+  .bg-glacier {
     background: linear-gradient(
       180deg,
-      hsl(var(--void-deep)) 0%,
-      hsl(var(--void-mid)) 50%,
-      hsl(var(--void-deep)) 100%
+      hsl(186 100% 94%) 0%,
+      hsl(187 71% 85%) 30%,
+      hsl(190 80% 70%) 60%,
+      hsl(186 76% 30%) 100%
     );
   }
   
-  .bg-cosmic-radial {
+  .bg-glacier-radial {
     background: radial-gradient(
       ellipse at 50% 0%,
-      hsl(var(--void-glow)) 0%,
-      hsl(var(--void-deep)) 70%
+      hsl(186 100% 97%) 0%,
+      hsl(187 71% 85%) 40%,
+      hsl(186 76% 25%) 100%
     );
   }
   
-  /* Animated Gradient */
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient-shift 8s ease infinite;
+  /* Perspective for 3D effects */
+  .perspective-1000 {
+    perspective: 1000px;
   }
   
-  /* Pulse Glow */
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-  
-  /* Float Animation */
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  /* Shimmer Effect */
-  .animate-shimmer {
-    animation: shimmer 3s linear infinite;
+  .preserve-3d {
+    transform-style: preserve-3d;
   }
 }
 
 /* Keyframes */
-@keyframes gradient-shift {
+@keyframes shimmer {
+  0%, 100% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+}
+
+@keyframes holo-shift {
   0%, 100% {
     background-position: 0% 50%;
   }
@@ -309,56 +336,57 @@
   }
 }
 
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 0.6;
-    filter: brightness(1);
-  }
-  50% {
-    opacity: 1;
-    filter: brightness(1.3);
-  }
-}
-
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-15px);
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(185 100% 50% / 0.3);
   }
-  100% {
-    background-position: 200% 0;
+  50% {
+    box-shadow: 0 0 40px hsl(185 100% 50% / 0.5);
   }
 }
 
-/* Scrollbar Styling */
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Scrollbar - Light Ice Theme */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--void-deep));
+  background: hsl(186 100% 94%);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--ice-primary) / 0.3);
-  border-radius: 4px;
+  background: linear-gradient(180deg, hsl(185 100% 60%), hsl(195 100% 50%));
+  border-radius: 5px;
+  border: 2px solid hsl(186 100% 94%);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--ice-primary) / 0.5);
+  background: linear-gradient(180deg, hsl(185 100% 50%), hsl(195 100% 45%));
 }
 
-/* Selection Styling */
+/* Selection */
 ::selection {
-  background: hsl(var(--ice-primary) / 0.3);
-  color: hsl(var(--foreground));
+  background: hsl(185 100% 50% / 0.3);
+  color: hsl(199 89% 20%);
 }

@@ -5,21 +5,21 @@ import { ReactNode } from 'react';
 interface GlassCardProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
   children: ReactNode;
   className?: string;
-  glowOnHover?: boolean;
-  variant?: 'default' | 'glow' | 'intense';
+  variant?: 'ice' | 'diamond' | 'frost';
+  hover3D?: boolean;
 }
 
 export const GlassCard = ({ 
   children, 
   className,
-  glowOnHover = true,
-  variant = 'default',
+  variant = 'ice',
+  hover3D = true,
   ...props 
 }: GlassCardProps) => {
   const variants = {
-    default: 'glass-card',
-    glow: 'glass-card-glow',
-    intense: 'glass-card-glow glow-border',
+    ice: 'glass-ice',
+    diamond: 'glass-diamond',
+    frost: 'glass-ice opacity-90',
   };
   
   return (
@@ -27,23 +27,25 @@ export const GlassCard = ({
       className={cn(
         variants[variant],
         'relative overflow-hidden',
-        glowOnHover && 'transition-all duration-500 hover:shadow-glow-lg',
         className
       )}
-      whileHover={glowOnHover ? { 
-        y: -5,
+      whileHover={hover3D ? { 
+        y: -8,
+        rotateX: 2,
+        rotateY: -2,
         transition: { duration: 0.3 }
       } : undefined}
+      style={{ transformStyle: 'preserve-3d' }}
       {...props}
     >
-      {/* Frost texture overlay */}
-      <div className="frost-overlay" />
+      {/* Frost texture */}
+      <div className="frost-texture" />
       
-      {/* Gradient shine effect */}
+      {/* Top highlight */}
       <div 
-        className="absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none"
+        className="absolute top-0 left-0 right-0 h-px opacity-50"
         style={{
-          background: 'linear-gradient(135deg, transparent 40%, hsl(185 100% 70% / 0.1) 50%, transparent 60%)',
+          background: 'linear-gradient(90deg, transparent, hsl(0 0% 100%), transparent)',
         }}
       />
       

@@ -4,12 +4,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { CrystalBackground } from "./components/three/CrystalBackground";
+import { GlacierBackground } from "./components/three/GlacierBackground";
 import { Navigation } from "./components/layout/Navigation";
 import { PageTransition } from "./components/layout/PageTransition";
-import Landing from "./pages/Landing";
+import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Success from "./pages/Success";
+import Status from "./pages/Status";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,7 +24,7 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={
           <PageTransition>
-            <Landing />
+            <Home />
           </PageTransition>
         } />
         <Route path="/register" element={
@@ -33,6 +35,16 @@ const AnimatedRoutes = () => {
         <Route path="/success" element={
           <PageTransition>
             <Success />
+          </PageTransition>
+        } />
+        <Route path="/status" element={
+          <PageTransition>
+            <Status />
+          </PageTransition>
+        } />
+        <Route path="/admin" element={
+          <PageTransition>
+            <Admin />
           </PageTransition>
         } />
         <Route path="*" element={
@@ -51,8 +63,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        {/* Persistent 3D Background */}
-        <CrystalBackground />
+        {/* Persistent 3D Glacier Background */}
+        <GlacierBackground />
         
         {/* Navigation */}
         <Navigation />
