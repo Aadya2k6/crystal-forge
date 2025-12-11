@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { CrystalButton } from '@/components/ui/CrystalButton';
 import { FrostInput } from '@/components/ui/FrostInput';
+import { WinterBackground } from '@/components/ui/WinterBackground';
 import { 
   CheckCircle, 
   XCircle, 
@@ -73,6 +74,9 @@ const Admin = () => {
   
   return (
     <div className="min-h-screen relative overflow-hidden pt-28 pb-16 px-4">
+      {/* Winter themed background elements */}
+      <WinterBackground />
+      
       <div className="max-w-6xl mx-auto relative z-10">
         <motion.div
           className="text-center mb-12"

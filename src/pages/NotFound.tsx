@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { CrystalButton } from "@/components/ui/CrystalButton";
+import { WinterBackground } from "@/components/ui/WinterBackground";
 import { Home, AlertTriangle, Snowflake } from "lucide-react";
 
 const NotFound = () => {
@@ -14,6 +15,9 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative">
+      {/* Winter themed background elements */}
+      <WinterBackground />
+      
       {/* Decorative snowflakes */}
       <motion.div
         className="absolute top-20 left-20 w-32 h-32 opacity-10"

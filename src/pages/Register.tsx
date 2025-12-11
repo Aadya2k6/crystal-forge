@@ -5,6 +5,7 @@ import { DiamondPrism } from '@/components/three/DiamondPrism';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { CrystalButton } from '@/components/ui/CrystalButton';
 import { FrostInput } from '@/components/ui/FrostInput';
+import { WinterBackground } from '@/components/ui/WinterBackground';
 import { useRegistrationStore } from '@/stores/registrationStore';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Users, Lightbulb, CheckCircle, Plus, Trash2, Upload } from 'lucide-react';
@@ -290,6 +291,7 @@ const Register = () => {
   
   return (
     <div className="min-h-screen relative overflow-hidden pt-28 pb-16 px-4">
+      <WinterBackground />
       <div className="max-w-7xl mx-auto">
         <motion.div
           className="text-center mb-12"

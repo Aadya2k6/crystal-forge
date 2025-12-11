@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRegistrationStore } from '@/stores/registrationStore';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { CrystalButton } from '@/components/ui/CrystalButton';
+import { WinterBackground } from '@/components/ui/WinterBackground';
 import { useEffect, useRef, MouseEvent, useState } from 'react';
 import { Sparkles, CheckCircle2, Copy, Home, Snowflake } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
@@ -224,6 +225,9 @@ const Success = () => {
   
   return (
     <div className="min-h-screen relative overflow-hidden pt-28 pb-16 px-4">
+      {/* Winter themed background elements */}
+      <WinterBackground />
+      
       {/* Snow Confetti */}
       <SnowConfetti />
       

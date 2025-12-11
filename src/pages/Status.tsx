@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { CrystalButton } from '@/components/ui/CrystalButton';
 import { FrostInput } from '@/components/ui/FrostInput';
+import { WinterBackground } from '@/components/ui/WinterBackground';
 import { Search, CheckCircle, Clock, XCircle, Snowflake } from 'lucide-react';
 
 type StatusType = 'idle' | 'verified' | 'pending' | 'rejected';
@@ -38,6 +39,7 @@ const Status = () => {
   
   return (
     <div className="min-h-screen relative overflow-hidden pt-28 pb-16 px-4">
+      <WinterBackground />
       {/* Frozen lake effect */}
       <div 
         className="absolute inset-0 pointer-events-none"
