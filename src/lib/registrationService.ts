@@ -14,8 +14,68 @@ export interface FirebaseRegistrationData extends Omit<RegistrationData, 'isVeri
 class RegistrationService {
   private collectionName = 'hackathon_registrations';
 
+  // Check for duplicate emails across all registrations
+  async checkEmailUniqueness(emails: string[]): Promise<{ isUnique: boolean; duplicateEmails: string[] }> {
+    try {
+      const querySnapshot = await getDocs(collection(db, this.collectionName));
+      const existingEmails = new Set<string>();
+      
+      // Collect all existing emails from all registrations
+      querySnapshot.forEach((doc) => {
+        const data = doc.data() as FirebaseRegistrationData;
+        if (data.members && Array.isArray(data.members)) {
+          data.members.forEach((member: any) => {
+            if (member.email) {
+              existingEmails.add(member.email.toLowerCase().trim());
+            }
+          });
+        }
+      });
+      
+      // Check for duplicates in the new registration
+      const duplicateEmails: string[] = [];
+      const newEmailsSet = new Set<string>();
+      
+      for (const email of emails) {
+        const normalizedEmail = email.toLowerCase().trim();
+        
+        // Check if email already exists in database
+        if (existingEmails.has(normalizedEmail)) {
+          duplicateEmails.push(email);
+        }
+        
+        // Check for duplicates within the same registration
+        if (newEmailsSet.has(normalizedEmail)) {
+          if (!duplicateEmails.includes(email)) {
+            duplicateEmails.push(email);
+          }
+        } else {
+          newEmailsSet.add(normalizedEmail);
+        }
+      }
+      
+      return {
+        isUnique: duplicateEmails.length === 0,
+        duplicateEmails: duplicateEmails
+      };
+    } catch (error) {
+      console.error('Error checking email uniqueness: ', error);
+      throw new Error('Failed to validate email uniqueness. Please try again.');
+    }
+  }
+
   async saveRegistration(data: RegistrationData): Promise<{id: string, teamId: string}> {
     try {
+      // Extract all emails from the registration
+      const allEmails = data.members.map(member => member.email);
+      
+      // Check email uniqueness first
+      const emailValidation = await this.checkEmailUniqueness(allEmails);
+      
+      if (!emailValidation.isUnique) {
+        throw new Error(`The following email addresses are already registered: ${emailValidation.duplicateEmails.join(', ')}. Each email can only be used once.`);
+      }
+      
       const teamId = this.generateTeamId();
       const registrationData: Omit<FirebaseRegistrationData, 'id'> = {
         teamName: data.teamName,

@@ -36,6 +36,10 @@ class EmailService {
         subject: `Team ${data.status === 'approved' ? 'Approved' : 'Rejected'} - ${data.teamName}`
       };
 
+      // Debug logging to verify email recipient
+      console.log('Sending email TO:', data.teamLeadEmail);
+      console.log('Template params:', templateParams);
+
       const result = await emailjs.send(
         this.serviceId,
         this.templateId,

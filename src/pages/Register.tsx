@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
-import { Suspense, useCallback } from 'react';
+import { Suspense, useCallback, useState, useEffect } from 'react';
 import { DiamondPrism } from '@/components/three/DiamondPrism';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { CrystalButton } from '@/components/ui/CrystalButton';
@@ -244,8 +244,49 @@ const VerificationStep = () => {
   );
 };
 
-const TeamInfoStep = () => {
+const TeamInfoStep = ({ emailErrors, setEmailErrors }: {
+  emailErrors: { [key: number]: string };
+  setEmailErrors: (errors: { [key: number]: string }) => void;
+}) => {
   const { data, updateData, updateMember, addMember, removeMember } = useRegistrationStore();
+  
+  // Real-time email validation
+  useEffect(() => {
+    const errors: { [key: number]: string } = {};
+    const emails = data.members.map(m => m.email.toLowerCase().trim()).filter(e => e !== '');
+    const emailCounts = new Map<string, number[]>();
+    
+    // Track which indices have which emails
+    emails.forEach((email, index) => {
+      const normalizedEmail = email.toLowerCase();
+      if (!emailCounts.has(normalizedEmail)) {
+        emailCounts.set(normalizedEmail, []);
+      }
+      emailCounts.get(normalizedEmail)!.push(index);
+    });
+    
+    // Check for duplicates and invalid emails
+    data.members.forEach((member, index) => {
+      const email = member.email.trim();
+      if (email) {
+        // Check email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          errors[index] = 'Invalid email format';
+          return;
+        }
+        
+        // Check for duplicates within the team
+        const normalizedEmail = email.toLowerCase();
+        const duplicateIndices = emailCounts.get(normalizedEmail) || [];
+        if (duplicateIndices.length > 1) {
+          errors[index] = 'This email is already used by another team member';
+        }
+      }
+    });
+    
+    setEmailErrors(errors);
+  }, [data.members]);
   
   return (
     <div className="space-y-6">
@@ -304,12 +345,24 @@ const TeamInfoStep = () => {
                 value={member.name}
                 onChange={(e) => updateMember(index, { name: e.target.value })}
               />
-              <FrostInput
-                placeholder="Email address"
-                type="email"
-                value={member.email}
-                onChange={(e) => updateMember(index, { email: e.target.value })}
-              />
+              <div className="space-y-1">
+                <FrostInput
+                  placeholder="Email address"
+                  type="email"
+                  value={member.email}
+                  onChange={(e) => updateMember(index, { email: e.target.value })}
+                  className={emailErrors[index] ? 'border-red-400 focus:border-red-400' : ''}
+                />
+                {emailErrors[index] && (
+                  <motion.p
+                    className="text-red-400 text-xs font-medium"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    {emailErrors[index]}
+                  </motion.p>
+                )}
+              </div>
             </div>
           </motion.div>
         ))}
@@ -439,6 +492,8 @@ const ConfirmStep = () => {
 
 const Register = () => {
   const navigate = useNavigate();
+  const [emailErrors, setEmailErrors] = useState<{ [key: number]: string }>({});
+  
   const { 
     currentStep, 
     setStep, 
@@ -447,14 +502,22 @@ const Register = () => {
     isLoading,
     error,
     submitRegistration,
+    checkEmailDuplicates,
     setError 
   } = useRegistrationStore();
   
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(async () => {
     if (currentStep < steps.length - 1) {
+      // If moving from step 1 (team info) to step 2, validate emails against database
+      if (currentStep === 1) {
+        const isValid = await checkEmailDuplicates();
+        if (!isValid) {
+          return; // Don't proceed if emails are invalid
+        }
+      }
       setStep(currentStep + 1);
     }
-  }, [currentStep, setStep]);
+  }, [currentStep, setStep, checkEmailDuplicates]);
   
   const handlePrev = useCallback(() => {
     if (currentStep > 0) {
@@ -478,10 +541,13 @@ const Register = () => {
       case 0:
         return data.isVerified;
       case 1:
+        // Check for team name, required member fields, valid emails, and no email errors
+        const hasEmailErrors = Object.keys(emailErrors).length > 0;
         return data.teamName.length > 0 && 
                data.members[0].name.length > 0 && 
                data.members[0].email.length > 0 &&
-               data.members.every(member => member.email ? member.email.includes('@') && member.email.includes('.') : true);
+               data.members.every(member => member.email ? member.email.includes('@') && member.email.includes('.') : true) &&
+               !hasEmailErrors;
       case 2:
         return data.projectTitle.length > 0 && 
                data.projectIdea.length > 0 && 
@@ -492,7 +558,7 @@ const Register = () => {
       default:
         return false;
     }
-  }, [currentStep, data]);
+  }, [currentStep, data, emailErrors]);
   
   return (
     <div className="min-h-screen relative overflow-hidden pt-28 pb-16 px-4">
@@ -550,7 +616,7 @@ const Register = () => {
                 transition={{ duration: 0.3 }}
               >
                 {currentStep === 0 && <VerificationStep />}
-                {currentStep === 1 && <TeamInfoStep />}
+                {currentStep === 1 && <TeamInfoStep emailErrors={emailErrors} setEmailErrors={setEmailErrors} />}
                 {currentStep === 2 && <ProjectIdeaStep />}
                 {currentStep === 3 && <ConfirmStep />}
               </motion.div>
