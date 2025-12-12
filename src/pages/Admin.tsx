@@ -5,6 +5,7 @@ import { CrystalButton } from '@/components/ui/CrystalButton';
 import { FrostInput } from '@/components/ui/FrostInput';
 import { WinterBackground } from '@/components/ui/WinterBackground';
 import { registrationService, FirebaseRegistrationData } from '@/lib/registrationService';
+import { emailService } from '@/lib/emailService';
 import { 
   CheckCircle, 
   XCircle, 
@@ -15,7 +16,8 @@ import {
   Shield,
   Lock,
   LogOut,
-  RefreshCw
+  RefreshCw,
+  Mail
 } from 'lucide-react';
 
 type TeamStatus = 'pending' | 'approved' | 'rejected';
@@ -31,6 +33,8 @@ type Team = {
   domain?: string;
   projectIdea?: string;
   createdAt?: any;
+  // Store the full Firebase data for email access
+  firebaseData?: FirebaseRegistrationData;
 };
 
 
@@ -44,6 +48,7 @@ const Admin = () => {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailStatus, setEmailStatus] = useState<{ [key: string]: 'sending' | 'success' | 'failed' }>({});
   
   // Helper function to get team avatar based on domain
   const getTeamAvatar = (domain: string) => {
@@ -71,7 +76,8 @@ const Admin = () => {
       projectTitle: fbData.projectTitle,
       domain: fbData.domain,
       projectIdea: fbData.projectIdea,
-      createdAt: fbData.createdAt
+      createdAt: fbData.createdAt,
+      firebaseData: fbData // Store complete Firebase data
     };
   };
 
@@ -131,25 +137,115 @@ const Admin = () => {
   
   const handleApprove = async (teamId: string) => {
     try {
+      setEmailStatus(prev => ({ ...prev, [teamId]: 'sending' }));
+      
+      // Find the team data first
+      const team = teams.find(t => t.id === teamId);
+      if (!team || !team.firebaseData) {
+        throw new Error('Team not found or missing Firebase data');
+      }
+
+      // Get team lead email from Firebase data
+      const teamLeadMember = team.firebaseData.members.find(member => 
+        member.role?.toLowerCase().includes('lead') || 
+        member.role?.toLowerCase().includes('captain')
+      ) || team.firebaseData.members[0]; // Fallback to first member
+      
+      const teamLeadEmail = teamLeadMember?.email;
+      if (!teamLeadEmail) {
+        throw new Error('Team lead email not found');
+      }
+
+      // Update status in database
       await registrationService.updateStatus(teamId, 'approved');
+      
+      // Update local state
       setTeams(teams.map(team => 
         team.id === teamId ? { ...team, status: 'approved' as TeamStatus } : team
       ));
+
+      // Send email notification
+      const emailData = {
+        teamName: team.name,
+        teamCaptain: team.captain,
+        teamId: team.teamId,
+        status: 'approved' as const,
+        projectTitle: team.projectTitle,
+        domain: team.domain,
+        teamLeadEmail: teamLeadEmail
+      };
+
+      const emailSent = await emailService.sendStatusNotification(emailData);
+      
+      if (emailSent) {
+        setEmailStatus(prev => ({ ...prev, [teamId]: 'success' }));
+        console.log('Approval email sent successfully to:', teamLeadEmail);
+      } else {
+        setEmailStatus(prev => ({ ...prev, [teamId]: 'failed' }));
+        console.log('Failed to send approval email to:', teamLeadEmail);
+      }
+
     } catch (err) {
       console.error('Error approving team:', err);
-      setError('Failed to approve team. Please try again.');
+      setError(`Failed to approve team. ${err.message}`);
+      setEmailStatus(prev => ({ ...prev, [teamId]: 'failed' }));
     }
   };
-  
+
   const handleReject = async (teamId: string) => {
     try {
+      setEmailStatus(prev => ({ ...prev, [teamId]: 'sending' }));
+      
+      // Find the team data first
+      const team = teams.find(t => t.id === teamId);
+      if (!team || !team.firebaseData) {
+        throw new Error('Team not found or missing Firebase data');
+      }
+
+      // Get team lead email from Firebase data
+      const teamLeadMember = team.firebaseData.members.find(member => 
+        member.role?.toLowerCase().includes('lead') || 
+        member.role?.toLowerCase().includes('captain')
+      ) || team.firebaseData.members[0]; // Fallback to first member
+      
+      const teamLeadEmail = teamLeadMember?.email;
+      if (!teamLeadEmail) {
+        throw new Error('Team lead email not found');
+      }
+
+      // Update status in database
       await registrationService.updateStatus(teamId, 'rejected');
+      
+      // Update local state
       setTeams(teams.map(team => 
         team.id === teamId ? { ...team, status: 'rejected' as TeamStatus } : team
       ));
+
+      // Send email notification
+      const emailData = {
+        teamName: team.name,
+        teamCaptain: team.captain,
+        teamId: team.teamId,
+        status: 'rejected' as const,
+        projectTitle: team.projectTitle,
+        domain: team.domain,
+        teamLeadEmail: teamLeadEmail
+      };
+
+      const emailSent = await emailService.sendStatusNotification(emailData);
+      
+      if (emailSent) {
+        setEmailStatus(prev => ({ ...prev, [teamId]: 'success' }));
+        console.log('Rejection email sent successfully to:', teamLeadEmail);
+      } else {
+        setEmailStatus(prev => ({ ...prev, [teamId]: 'failed' }));
+        console.log('Failed to send rejection email to:', teamLeadEmail);
+      }
+
     } catch (err) {
       console.error('Error rejecting team:', err);
-      setError('Failed to reject team. Please try again.');
+      setError(`Failed to reject team. ${err.message}`);
+      setEmailStatus(prev => ({ ...prev, [teamId]: 'failed' }));
     }
   };
   
@@ -415,6 +511,7 @@ const Admin = () => {
                                 className="p-2 rounded-lg bg-success/10 hover:bg-success/20 text-success transition-colors"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+                                disabled={emailStatus[team.id] === 'sending'}
                               >
                                 <CheckCircle className="w-4 h-4" />
                               </motion.button>
@@ -423,10 +520,34 @@ const Admin = () => {
                                 className="p-2 rounded-lg bg-destructive/10 hover:bg-destructive/20 text-destructive transition-colors"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+                                disabled={emailStatus[team.id] === 'sending'}
                               >
                                 <XCircle className="w-4 h-4" />
                               </motion.button>
                             </>
+                          )}
+                          {/* Email status indicator */}
+                          {emailStatus[team.id] && (
+                            <div className="flex items-center">
+                              {emailStatus[team.id] === 'sending' && (
+                                <div className="flex items-center text-blue-400 text-xs">
+                                  <RefreshCw className="w-3 h-3 animate-spin mr-1" />
+                                  Sending...
+                                </div>
+                              )}
+                              {emailStatus[team.id] === 'success' && (
+                                <div className="flex items-center text-green-400 text-xs">
+                                  <Mail className="w-3 h-3 mr-1" />
+                                  Email sent
+                                </div>
+                              )}
+                              {emailStatus[team.id] === 'failed' && (
+                                <div className="flex items-center text-red-400 text-xs">
+                                  <XCircle className="w-3 h-3 mr-1" />
+                                  Email failed
+                                </div>
+                              )}
+                            </div>
                           )}
                         </div>
                       </td>

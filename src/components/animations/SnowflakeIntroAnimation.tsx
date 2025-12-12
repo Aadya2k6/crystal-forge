@@ -35,13 +35,28 @@ interface BackgroundFlake {
   rotationSpeed: number;
 }
 
+interface CornerSnowflake {
+  startX: number;
+  startY: number;
+  currentX: number;
+  currentY: number;
+  targetX: number;
+  targetY: number;
+  size: number;
+  rotation: number;
+  rotationSpeed: number;
+  alpha: number;
+  corner: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+}
+
 export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
   const particlesRef = useRef<Particle[]>([]);
   const backgroundFlakesRef = useRef<BackgroundFlake[]>([]);
+  const cornerSnowflakesRef = useRef<CornerSnowflake[]>([]);
   const startTime = useRef<number>(Date.now());
-  const [phase, setPhase] = useState<string>('forming');
+  const [phase, setPhase] = useState<string>('entrance');
   const [circlePosition, setCirclePosition] = useState({ x: -100, y: 0 });
 
   useEffect(() => {
@@ -69,6 +84,46 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
       rotation: Math.random() * Math.PI * 2,
       rotationSpeed: (Math.random() - 0.5) * 0.02,
     });
+
+    const createCornerSnowflake = (corner: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight', canvasWidth: number, canvasHeight: number): CornerSnowflake => {
+      let startX, startY;
+      const centerX = canvasWidth / 2;
+      const centerY = canvasHeight / 2;
+      
+      // Position snowflakes outside the screen boundaries
+      switch (corner) {
+        case 'topLeft':
+          startX = -100;
+          startY = -100;
+          break;
+        case 'topRight':
+          startX = canvasWidth + 100;
+          startY = -100;
+          break;
+        case 'bottomLeft':
+          startX = -100;
+          startY = canvasHeight + 100;
+          break;
+        case 'bottomRight':
+          startX = canvasWidth + 100;
+          startY = canvasHeight + 100;
+          break;
+      }
+      
+      return {
+        startX,
+        startY,
+        currentX: startX,
+        currentY: startY,
+        targetX: centerX,
+        targetY: centerY,
+        size: Math.random() * 30 + 40, // Large snowflakes
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.03,
+        alpha: 0.9,
+        corner
+      };
+    };
 
     const createParticle = (angle: number, radius: number, branchIndex: number, positionOnBranch: number): Particle => ({
       x: 0,
@@ -111,6 +166,59 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
         ctx.lineTo(Math.cos(angle) * spokeLength, Math.sin(angle) * spokeLength);
         ctx.stroke();
       }
+
+      ctx.restore();
+    };
+
+    const drawCornerSnowflake = (ctx: CanvasRenderingContext2D, snowflake: CornerSnowflake) => {
+      ctx.save();
+      ctx.translate(snowflake.currentX, snowflake.currentY);
+      ctx.rotate(snowflake.rotation);
+      ctx.globalAlpha = snowflake.alpha;
+
+      // Brighter, more visible snowflake
+      ctx.strokeStyle = '#ffffff';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.lineWidth = 4;
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = '#67e8f9';
+
+      const spokes = 6;
+      const spokeLength = snowflake.size;
+
+      // Main spokes
+      for (let i = 0; i < spokes; i++) {
+        const angle = (i * Math.PI * 2) / spokes;
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(angle) * spokeLength, Math.sin(angle) * spokeLength);
+        ctx.stroke();
+
+        // Add decorative branches
+        const branchLength = spokeLength * 0.6;
+        const branchAngle1 = angle - Math.PI / 5;
+        const branchAngle2 = angle + Math.PI / 5;
+        
+        // First branch
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(angle) * spokeLength * 0.7, Math.sin(angle) * spokeLength * 0.7);
+        ctx.lineTo(Math.cos(branchAngle1) * branchLength + Math.cos(angle) * spokeLength * 0.7, 
+                  Math.sin(branchAngle1) * branchLength + Math.sin(angle) * spokeLength * 0.7);
+        ctx.stroke();
+
+        // Second branch
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(angle) * spokeLength * 0.7, Math.sin(angle) * spokeLength * 0.7);
+        ctx.lineTo(Math.cos(branchAngle2) * branchLength + Math.cos(angle) * spokeLength * 0.7, 
+                  Math.sin(branchAngle2) * branchLength + Math.sin(angle) * spokeLength * 0.7);
+        ctx.stroke();
+      }
+
+      // Center circle
+      ctx.beginPath();
+      ctx.arc(0, 0, snowflake.size * 0.25, 0, Math.PI * 2);
+      ctx.fill();
 
       ctx.restore();
     };
@@ -169,6 +277,14 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
       }
     };
 
+    const initCornerSnowflakes = () => {
+      cornerSnowflakesRef.current = [];
+      cornerSnowflakesRef.current.push(createCornerSnowflake('topLeft', canvas.width, canvas.height));
+      cornerSnowflakesRef.current.push(createCornerSnowflake('topRight', canvas.width, canvas.height));
+      cornerSnowflakesRef.current.push(createCornerSnowflake('bottomLeft', canvas.width, canvas.height));
+      cornerSnowflakesRef.current.push(createCornerSnowflake('bottomRight', canvas.width, canvas.height));
+    };
+
     const initParticles = () => {
       particlesRef.current = [];
       const branches = 6; // 6 main branches for snowflake
@@ -207,35 +323,62 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
       const elapsed = currentTime - startTime.current;
       const centerY = canvas.height / 2;
 
-      // Phase transitions - much slower and more elegant
-      if (phase === 'forming' && elapsed > 2000) {
-        setPhase('rolling');
-      } else if (phase === 'rolling' && elapsed > 6000) {
-        setPhase('centering');
-      } else if (phase === 'centering' && elapsed > 7500) {
+      // Phase transitions - simplified for four corner snowflakes
+      if (phase === 'entrance' && elapsed > 3000) {
         setPhase('burst');
-      } else if (phase === 'burst' && elapsed > 12000) { // Much longer burst phase
+      } else if (phase === 'burst' && elapsed > 7000) {
         setPhase('text');
-      } else if (phase === 'text' && elapsed > 16000) {
+      } else if (phase === 'text' && elapsed > 11000) {
         setPhase('fadeOut');
-      } else if (phase === 'fadeOut' && elapsed > 17500) {
+      } else if (phase === 'fadeOut' && elapsed > 12500) {
         onComplete();
       }
 
-      // Update circle position during rolling phase
-      if (phase === 'rolling') {
-        const rollProgress = Math.min((elapsed - 2000) / 4000, 1);
-        const easeProgress = 1 - Math.pow(1 - rollProgress, 2); // Gentler easing
-        setCirclePosition({
-          x: -250 + (canvas.width / 2 + 250) * easeProgress, // Start from further away
-          y: centerY
-        });
-      } else if (phase === 'centering') {
-        const centerProgress = Math.min((elapsed - 6000) / 1500, 1);
-        const easeProgress = 1 - Math.pow(1 - centerProgress, 2);
-        setCirclePosition({
-          x: canvas.width / 2,
-          y: centerY
+      // Set circle position to center for burst effect
+      setCirclePosition({
+        x: canvas.width / 2,
+        y: centerY
+      });
+
+      // Update and draw corner snowflakes (entrance and burst phases)
+      if (phase === 'entrance' || phase === 'burst') {
+        cornerSnowflakesRef.current.forEach((snowflake, index) => {
+          if (phase === 'entrance') {
+            const entranceProgress = Math.min(elapsed / 3000, 1);
+            // Smooth easing function for natural movement
+            const easeProgress = 1 - Math.pow(1 - entranceProgress, 3);
+            
+            // Calculate current position with smooth interpolation
+            snowflake.currentX = snowflake.startX + (snowflake.targetX - snowflake.startX) * easeProgress;
+            snowflake.currentY = snowflake.startY + (snowflake.targetY - snowflake.startY) * easeProgress;
+            
+            // Rotate the snowflake as it moves
+            snowflake.rotation += snowflake.rotationSpeed;
+            
+            // Stay visible during entrance
+            snowflake.alpha = Math.min(0.9, entranceProgress * 1.2);
+          } else if (phase === 'burst') {
+            const burstProgress = Math.min((elapsed - 3000) / 4000, 1);
+            const explosionForce = burstProgress * 15;
+            
+            // Calculate burst direction for each corner
+            const angle = index * (Math.PI / 2); // 0, 90, 180, 270 degrees
+            const burstDistance = explosionForce * 50;
+            
+            snowflake.currentX = snowflake.targetX + Math.cos(angle) * burstDistance;
+            snowflake.currentY = snowflake.targetY + Math.sin(angle) * burstDistance;
+            
+            // Increase size during burst
+            snowflake.size = Math.min(snowflake.size + 0.5, 80);
+            
+            // Rotate faster during burst
+            snowflake.rotation += snowflake.rotationSpeed * 2;
+            
+            // Fade out during burst
+            snowflake.alpha = Math.max(0.2, 0.9 - burstProgress * 0.7);
+          }
+          
+          drawCornerSnowflake(ctx, snowflake);
         });
       }
 
@@ -256,84 +399,22 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
 
         // Fade out only during fadeOut phase
         if (phase === 'fadeOut') {
-          const fadeProgress = (elapsed - 16000) / 1500;
+          const fadeProgress = (elapsed - 11000) / 1500;
           flake.alpha = Math.max(0, 0.9 - fadeProgress);
         }
 
         drawBackgroundFlake(ctx, flake);
       });
 
-      // Update and draw particles
-      particlesRef.current.forEach((particle, index) => {
-        if (phase === 'forming' || phase === 'rolling' || phase === 'centering') {
-          // Circle formation with rolling motion
-          particle.x = circlePosition.x + Math.cos(particle.angle) * particle.radius;
-          particle.y = circlePosition.y + Math.sin(particle.angle) * particle.radius;
-          particle.rotation += particle.rotationSpeed;
-          
-          // Add rolling rotation effect
-          if (phase === 'rolling') {
-            particle.angle += 0.02;
-          }
-        } else if (phase === 'burst') {
-          // Simplified explosion effect for performance
-          const burstProgress = (elapsed - 7500) / 4500;
-          const explosionForce = burstProgress * 10; // Simplified calculation
-          
-          particle.x = circlePosition.x + Math.cos(particle.angle) * (particle.originalRadius + explosionForce * 30);
-          particle.y = circlePosition.y + Math.sin(particle.angle) * (particle.originalRadius + explosionForce * 30);
-          
-          particle.size = Math.min(particle.size + 0.2, 12);
-          particle.alpha = Math.max(0.4, 1 - burstProgress * 0.3);
-          particle.rotation += particle.rotationSpeed;
-        } else if (phase === 'fadeOut') {
-          // Fade out particles
-          const fadeProgress = (elapsed - 16000) / 1500;
-          particle.alpha = Math.max(0, 1 - fadeProgress);
-        }
-        
-        drawParticle(ctx, particle);
-      });
+      // Particles are no longer used - corner snowflakes handle the animation
 
-      // Draw optimized mesh connections
-      if (phase === 'forming' || phase === 'rolling' || phase === 'centering') {
-        ctx.shadowBlur = 5; // Reduce shadow for connections
-        
-        for (let i = 0; i < particlesRef.current.length; i++) {
-          const particle1 = particlesRef.current[i];
-          
-          // Only check nearby particles to reduce calculations
-          for (let j = i + 1; j < Math.min(i + 8, particlesRef.current.length); j++) {
-            const particle2 = particlesRef.current[j];
-            
-            const dx = particle1.x - particle2.x;
-            const dy = particle1.y - particle2.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance < 120) {
-              const sameBranch = particle1.branchIndex === particle2.branchIndex;
-              const centerConnection = particle1.branchIndex === -1 || particle2.branchIndex === -1;
-              
-              if (sameBranch || centerConnection) {
-                const opacity = (1 - distance / 120) * (sameBranch ? 0.8 : 0.6);
-                ctx.strokeStyle = `rgba(103, 232, 249, ${opacity})`;
-                ctx.lineWidth = sameBranch ? 3 : 2;
-                
-                ctx.beginPath();
-                ctx.moveTo(particle1.x, particle1.y);
-                ctx.lineTo(particle2.x, particle2.y);
-                ctx.stroke();
-              }
-            }
-          }
-        }
-      }
+      // Mesh connections removed - using corner snowflakes only
 
       // Draw simplified explosion rays during burst
       if (phase === 'burst') {
-        const burstProgress = (elapsed - 7500) / 4500;
-        const rayCount = 8; // Fewer rays for performance
-        const rayLength = Math.min(400, Math.pow(burstProgress, 0.4) * 800);
+        const burstProgress = (elapsed - 3000) / 4000;
+        const rayCount = 12; // More rays for dramatic effect
+        const rayLength = Math.min(500, Math.pow(burstProgress, 0.4) * 1000);
         
         ctx.save();
         ctx.translate(circlePosition.x, circlePosition.y);
@@ -357,6 +438,7 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
     };
 
     initBackgroundFlakes();
+    initCornerSnowflakes();
     initParticles();
     animate();
 
