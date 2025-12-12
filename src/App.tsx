@@ -7,6 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { GlacierBackground } from "./components/three/GlacierBackground";
 import { Navigation } from "./components/layout/Navigation";
 import { PageTransition } from "./components/layout/PageTransition";
+import { ChatBotTrigger } from "./components/ui/ChatBot";
 import { Home } from "./pages/Home";
 import Register from "./pages/Register";
 import Success from "./pages/Success";
@@ -74,6 +75,9 @@ const App = () => {
           
           {/* Animated Routes */}
           <AnimatedRoutes />
+          
+          {/* Global ChatBot - Always visible */}
+          <ChatBotTrigger />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

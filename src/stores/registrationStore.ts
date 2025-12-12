@@ -13,6 +13,8 @@ export interface RegistrationData {
   projectIdea: string;
   experience: string;
   agreeToRules: boolean;
+  isVerified: boolean;
+  recaptchaToken: string | null;
 }
 
 interface RegistrationStore {
@@ -25,6 +27,7 @@ interface RegistrationStore {
   addMember: () => void;
   removeMember: (index: number) => void;
   setTeamId: (id: string) => void;
+  setVerification: (token: string | null) => void;
   reset: () => void;
 }
 
@@ -35,6 +38,8 @@ const initialData: RegistrationData = {
   projectIdea: '',
   experience: '',
   agreeToRules: false,
+  isVerified: false,
+  recaptchaToken: null,
 };
 
 export const useRegistrationStore = create<RegistrationStore>((set) => ({
@@ -74,6 +79,14 @@ export const useRegistrationStore = create<RegistrationStore>((set) => ({
   })),
   
   setTeamId: (id) => set({ teamId: id }),
+  
+  setVerification: (token) => set((state) => ({
+    data: {
+      ...state.data,
+      isVerified: !!token,
+      recaptchaToken: token,
+    },
+  })),
   
   reset: () => set({ currentStep: 0, data: initialData, teamId: null }),
 }));

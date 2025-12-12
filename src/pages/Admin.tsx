@@ -11,7 +11,9 @@ import {
   Users, 
   Search,
   X,
-  Shield
+  Shield,
+  Lock,
+  LogOut
 } from 'lucide-react';
 
 // Mock data
@@ -35,9 +37,36 @@ type Team = {
 
 
 const Admin = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginData, setLoginData] = useState({ username: '', password: '' });
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [teams, setTeams] = useState<Team[]>(mockTeams);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  
+  // Simple authentication - in real app, use proper authentication
+  const handleLogin = async () => {
+    setIsLoggingIn(true);
+    setLoginError('');
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    if (loginData.username === 'admin' && loginData.password === 'crystalforge2025') {
+      setIsAuthenticated(true);
+      setLoginError('');
+    } else {
+      setLoginError('Invalid credentials. Please try again.');
+    }
+    setIsLoggingIn(false);
+  };
+  
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setLoginData({ username: '', password: '' });
+    setLoginError('');
+  };
   
   const filteredTeams = teams.filter(
     team => 
@@ -77,23 +106,109 @@ const Admin = () => {
       {/* Winter themed background elements */}
       <WinterBackground />
       
-      <div className="max-w-6xl mx-auto relative z-10">
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full glass-ice border border-ice-cyan/30">
-            <Shield className="w-4 h-4 text-primary" />
-            <span className="font-inter text-sm text-foreground/70">Admin Portal</span>
-          </div>
-          <h1 className="font-space text-4xl md:text-5xl text-glacier-deep font-bold mb-4">
-            Control <span className="text-transparent bg-clip-text bg-gradient-to-r from-ice-cyan to-holo-purple">Room</span>
-          </h1>
-          <p className="font-inter text-lg text-foreground/60">
-            Manage team registrations and approvals
-          </p>
-        </motion.div>
+      {!isAuthenticated ? (
+        // Login Form
+        <div className="max-w-md mx-auto relative z-10">
+          <motion.div
+            className="text-center mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full glass-ice border border-ice-cyan/30">
+              <Lock className="w-4 h-4 text-primary" />
+              <span className="font-inter text-sm text-foreground/70">Secure Access</span>
+            </div>
+            <h1 className="font-space text-4xl md:text-5xl text-glacier-deep font-bold mb-4">
+              Admin <span className="text-transparent bg-clip-text bg-gradient-to-r from-ice-cyan to-holo-purple">Portal</span>
+            </h1>
+            <p className="font-inter text-lg text-foreground/60">
+              Please authenticate to access the control room
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <GlassCard className="p-8" variant="diamond">
+              <div className="space-y-6">
+                <FrostInput
+                  label="Username"
+                  placeholder="Enter your username"
+                  value={loginData.username}
+                  onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
+                  onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                />
+                
+                <FrostInput
+                  label="Password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={loginData.password}
+                  onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                  onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                />
+                
+                {loginError && (
+                  <motion.div
+                    className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    {loginError}
+                  </motion.div>
+                )}
+                
+                <CrystalButton
+                  onClick={handleLogin}
+                  isLoading={isLoggingIn}
+                  disabled={!loginData.username || !loginData.password}
+                  className="w-full"
+                >
+                  <Shield className="w-4 h-4 mr-2" />
+                  Access Portal
+                </CrystalButton>
+                
+                <div className="text-center pt-4 border-t border-border">
+                  <p className="text-xs text-foreground/50">
+                    Demo credentials: admin / crystalforge2025
+                  </p>
+                </div>
+              </div>
+            </GlassCard>
+          </motion.div>
+        </div>
+      ) : (
+        // Admin Dashboard
+        <div className="max-w-6xl mx-auto relative z-10">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-ice border border-ice-cyan/30">
+                <Shield className="w-4 h-4 text-primary" />
+                <span className="font-inter text-sm text-foreground/70">Admin Portal</span>
+              </div>
+              <motion.button
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-ice border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="font-inter text-sm">Logout</span>
+              </motion.button>
+            </div>
+            <h1 className="font-space text-4xl md:text-5xl text-glacier-deep font-bold mb-4">
+              Control <span className="text-transparent bg-clip-text bg-gradient-to-r from-ice-cyan to-holo-purple">Room</span>
+            </h1>
+            <p className="font-inter text-lg text-foreground/60">
+              Manage team registrations and approvals
+            </p>
+          </motion.div>
         
         {/* Search and Stats */}
         <motion.div
@@ -303,7 +418,8 @@ const Admin = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+        </div>
+      )}
     </div>
   );
 };

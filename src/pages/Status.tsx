@@ -6,6 +6,205 @@ import { FrostInput } from '@/components/ui/FrostInput';
 import { WinterBackground } from '@/components/ui/WinterBackground';
 import { Search, CheckCircle, Clock, XCircle, Snowflake } from 'lucide-react';
 
+// Classy Snowman component for left side
+const LeftSnowman = () => {
+  return (
+    <motion.div
+      className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20"
+      initial={{ x: -100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 1, delay: 0.5 }}
+    >
+      {/* Snowman body - centered container */}
+      <div className="relative flex flex-col items-center">
+        {/* Top hat */}
+        <div className="relative z-10 -mb-2">
+          <div className="w-10 h-6 bg-gradient-to-b from-gray-900 to-gray-800 rounded-t-lg mx-auto"></div>
+          <div className="w-14 h-2 bg-gradient-to-b from-gray-900 to-gray-800 -mt-0.5 shadow-md mx-auto"></div>
+        </div>
+        
+        {/* Head */}
+        <div className="w-16 h-16 bg-gradient-to-br from-white to-blue-50 rounded-full shadow-xl relative border-2 border-blue-100 -mb-4 z-20">
+          {/* Eyes */}
+          <div className="absolute top-5 left-3 w-2 h-2 bg-gray-900 rounded-full"></div>
+          <div className="absolute top-5 right-3 w-2 h-2 bg-gray-900 rounded-full"></div>
+          {/* Carrot nose */}
+          <div className="absolute top-7 left-1/2 transform -translate-x-1/2 w-0 h-0 border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent border-l-[10px] border-l-orange-500 rotate-90"></div>
+          {/* Smile with coal */}
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-0.5">
+            <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
+            <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
+            <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
+          </div>
+          {/* Monocle */}
+          <div className="absolute top-4 right-1 w-5 h-5 border-2 border-gray-700 rounded-full bg-blue-100/30"></div>
+        </div>
+        
+        {/* Bow tie */}
+        <div className="relative z-30 -mb-2">
+          <div className="flex items-center">
+            <div className="w-3 h-4 bg-gradient-to-br from-red-600 to-red-700 transform -skew-x-12 rounded-l"></div>
+            <div className="w-1.5 h-2 bg-red-900 rounded"></div>
+            <div className="w-3 h-4 bg-gradient-to-bl from-red-600 to-red-700 transform skew-x-12 rounded-r"></div>
+          </div>
+        </div>
+        
+        {/* Middle body */}
+        <div className="w-20 h-20 bg-gradient-to-br from-white to-blue-50 rounded-full relative shadow-xl border-2 border-blue-100 -mb-6 z-10">
+          {/* Vest */}
+          <div className="absolute inset-2 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full overflow-hidden">
+            {/* Vest buttons */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 space-y-2">
+              <div className="w-2 h-2 bg-yellow-400 rounded-full shadow-sm"></div>
+              <div className="w-2 h-2 bg-yellow-400 rounded-full shadow-sm"></div>
+            </div>
+          </div>
+          
+          {/* Left arm - tipping hat gesture */}
+          <motion.div
+            className="absolute top-4 -left-2 w-8 h-2 bg-gradient-to-r from-white to-blue-50 rounded-full shadow-md origin-right"
+            animate={{ rotate: [0, -20, -10, -20, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {/* Left hand */}
+          <motion.div
+            className="absolute top-2 -left-8 w-3 h-3 bg-white rounded-full shadow-md border border-blue-200"
+            animate={{ y: [-1, -3, -2, -3, -1] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          />
+          
+          {/* Right arm - holding cane */}
+          <div className="absolute top-6 -right-2 w-8 h-2 bg-gradient-to-l from-white to-blue-50 rounded-full shadow-md transform rotate-15 origin-left"></div>
+          {/* Right hand holding cane */}
+          <div className="absolute top-4 -right-8 w-3 h-3 bg-white rounded-full shadow-md border border-blue-200"></div>
+          {/* Walking cane */}
+          <div className="absolute top-6 -right-10 w-1 h-16 bg-gradient-to-b from-amber-700 to-amber-900 rounded-full"></div>
+          <div className="absolute top-4 -right-12 w-3 h-3 border-2 border-amber-700 rounded-full bg-transparent"></div>
+        </div>
+        
+        {/* Bottom body */}
+        <div className="w-24 h-24 bg-gradient-to-br from-white to-blue-50 rounded-full relative shadow-xl border-2 border-blue-100">
+          {/* Coal buttons */}
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 space-y-2">
+            <div className="w-2 h-2 bg-gray-900 rounded-full shadow-sm"></div>
+            <div className="w-2 h-2 bg-gray-900 rounded-full shadow-sm"></div>
+            <div className="w-2 h-2 bg-gray-900 rounded-full shadow-sm"></div>
+          </div>
+        </div>
+        
+        {/* Remove old floating arms and accessories - they're now part of middle body */}
+      </div>
+    </motion.div>
+  );
+};
+
+// Classy Snowman component for right side
+const RightSnowman = () => {
+  return (
+    <motion.div
+      className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20"
+      initial={{ x: 100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 1, delay: 0.7 }}
+    >
+      {/* Snowman body - centered container */}
+      <div className="relative flex flex-col items-center">
+        {/* Top hat with ribbon */}
+        <div className="relative z-10 -mb-2">
+          <div className="w-10 h-6 bg-gradient-to-b from-gray-900 to-gray-800 rounded-t-lg relative mx-auto">
+            {/* Hat ribbon */}
+            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 to-blue-700"></div>
+          </div>
+          <div className="w-14 h-2 bg-gradient-to-b from-gray-900 to-gray-800 -mt-0.5 shadow-md mx-auto"></div>
+        </div>
+        
+        {/* Head */}
+        <div className="w-16 h-16 bg-gradient-to-br from-white to-blue-50 rounded-full shadow-xl relative border-2 border-blue-100 -mb-4 z-20">
+          {/* Eyes with monocle */}
+          <div className="absolute top-5 left-3 w-2 h-2 bg-gray-900 rounded-full"></div>
+          <div className="absolute top-5 right-3 w-2 h-2 bg-gray-900 rounded-full"></div>
+          {/* Monocle on right eye */}
+          <div className="absolute top-4 right-1 w-6 h-6 border-2 border-amber-600 rounded-full bg-blue-100/20">
+            <div className="absolute -right-1 top-1/2 w-4 h-0.5 bg-amber-600"></div>
+          </div>
+          {/* Carrot nose */}
+          <div className="absolute top-7 left-1/2 transform -translate-x-1/2 w-0 h-0 border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent border-l-[10px] border-l-orange-500 rotate-90"></div>
+          {/* Smile */}
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-0.5">
+            <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
+            <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
+            <div className="w-1 h-1 bg-gray-900 rounded-full"></div>
+          </div>
+        </div>
+        
+        {/* Fancy bow tie */}
+        <div className="relative z-30 -mb-2">
+          <div className="flex items-center">
+            <div className="w-3 h-4 bg-gradient-to-br from-purple-600 to-purple-700 transform -skew-x-12 rounded-l"></div>
+            <div className="w-1.5 h-2 bg-purple-900 rounded"></div>
+            <div className="w-3 h-4 bg-gradient-to-bl from-purple-600 to-purple-700 transform skew-x-12 rounded-r"></div>
+          </div>
+        </div>
+        
+        {/* Middle body */}
+        <div className="w-20 h-20 bg-gradient-to-br from-white to-blue-50 rounded-full relative shadow-xl border-2 border-blue-100 -mb-6 z-10">
+          {/* Tuxedo vest */}
+          <div className="absolute inset-2 bg-gradient-to-br from-gray-900 to-gray-800 rounded-full overflow-hidden">
+            {/* Vest buttons */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 space-y-2">
+              <div className="w-2 h-2 bg-yellow-400 rounded-full shadow-sm border border-yellow-600"></div>
+              <div className="w-2 h-2 bg-yellow-400 rounded-full shadow-sm border border-yellow-600"></div>
+            </div>
+            {/* Pocket square */}
+            <div className="absolute top-2 right-2 w-3 h-2 bg-gradient-to-br from-blue-400 to-blue-500 transform rotate-45"></div>
+          </div>
+          
+          {/* Left arm - holding pocket watch */}
+          <div className="absolute top-4 -left-2 w-8 h-2 bg-gradient-to-r from-white to-blue-50 rounded-full shadow-md transform -rotate-15 origin-right"></div>
+          {/* Left hand with pocket watch */}
+          <div className="absolute top-2 -left-8 w-3 h-3 bg-white rounded-full shadow-md border border-blue-200"></div>
+          {/* Pocket watch */}
+          <motion.div
+            className="absolute top-0 -left-12 w-5 h-5 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full border-2 border-amber-700 shadow-lg"
+            animate={{ rotate: [0, 5, 0, -5, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <div className="absolute inset-1 bg-white/30 rounded-full"></div>
+            <div className="absolute top-1/2 left-1/2 w-0.5 h-1.5 bg-gray-900 transform -translate-x-1/2 origin-bottom"></div>
+          </motion.div>
+          {/* Watch chain */}
+          <div className="absolute top-2 -left-5 w-4 h-0.5 bg-amber-600"></div>
+          
+          {/* Right arm - welcoming gesture */}
+          <motion.div
+            className="absolute top-6 -right-2 w-8 h-2 bg-gradient-to-l from-white to-blue-50 rounded-full shadow-md origin-left"
+            animate={{ rotate: [0, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {/* Right hand */}
+          <motion.div
+            className="absolute top-4 -right-8 w-3 h-3 bg-white rounded-full shadow-md border border-blue-200"
+            animate={{ y: [0, -1, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+        
+        {/* Bottom body */}
+        <div className="w-24 h-24 bg-gradient-to-br from-white to-blue-50 rounded-full relative shadow-xl border-2 border-blue-100">
+          {/* Coal buttons */}
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 space-y-2">
+            <div className="w-2 h-2 bg-gray-900 rounded-full shadow-sm"></div>
+            <div className="w-2 h-2 bg-gray-900 rounded-full shadow-sm"></div>
+            <div className="w-2 h-2 bg-gray-900 rounded-full shadow-sm"></div>
+          </div>
+        </div>
+        
+        {/* Remove old floating arms and accessories - they're now part of middle body */}
+      </div>
+    </motion.div>
+  );
+};
+
 type StatusType = 'idle' | 'verified' | 'pending' | 'rejected';
 
 const Status = () => {
@@ -40,6 +239,13 @@ const Status = () => {
   return (
     <div className="min-h-screen relative overflow-hidden pt-28 pb-16 px-4">
       <WinterBackground />
+      
+      {/* Left Snowman */}
+      <LeftSnowman />
+      
+      {/* Right Snowman */}
+      <RightSnowman />
+      
       {/* Frozen lake effect */}
       <div 
         className="absolute inset-0 pointer-events-none"

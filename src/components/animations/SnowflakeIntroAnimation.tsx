@@ -366,7 +366,7 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
       }
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [onComplete, phase, circlePosition]);
+  }, [onComplete, phase]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -431,7 +431,7 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
             >
               <div className="relative">
                 <span 
-                  className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-500"
+                  className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-500"
                   style={{ 
                     textShadow: '0 0 120px #67e8f9',
                     WebkitTextStroke: '3px rgba(255,255,255,0.4)',
@@ -439,50 +439,50 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
                     lineHeight: '0.9'
                   }}
                 >
-                  C
+                  N
                 </span>
                 <span 
-                  className="text-7xl sm:text-8xl md:text-[9rem] lg:text-[11rem] xl:text-[13rem] font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-cyan-300 to-blue-400"
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-cyan-300 to-blue-400"
                   style={{ 
                     textShadow: '0 0 100px #f9a8d4',
                     WebkitTextStroke: '2px rgba(255,255,255,0.3)',
                     fontFamily: 'Times New Roman, serif'
                   }}
                 >
-                  r
+                  u
                 </span>
                 <span 
-                  className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-pink-400"
+                  className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-pink-400"
                   style={{ 
                     textShadow: '0 0 120px #a855f7',
                     WebkitTextStroke: '3px rgba(255,255,255,0.4)',
                     fontFamily: 'Impact, sans-serif'
                   }}
                 >
-                  y
+                  m
                 </span>
                 <span 
-                  className="text-7xl sm:text-8xl md:text-[9rem] lg:text-[11rem] xl:text-[13rem] font-light text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-purple-300"
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-purple-300"
                   style={{ 
                     textShadow: '0 0 80px #67e8f9',
                     WebkitTextStroke: '2px rgba(255,255,255,0.2)',
                     fontFamily: 'Helvetica Neue, sans-serif'
                   }}
                 >
-                  s
+                  e
                 </span>
                 <span 
-                  className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-400 to-pink-400"
+                  className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-400 to-pink-400"
                   style={{ 
                     textShadow: '0 0 120px #3b82f6',
                     WebkitTextStroke: '3px rgba(255,255,255,0.4)',
                     fontFamily: 'Arial Black, sans-serif'
                   }}
                 >
-                  t
+                  r
                 </span>
                 <span 
-                  className="text-7xl sm:text-8xl md:text-[9rem] lg:text-[11rem] xl:text-[13rem] font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-cyan-300 to-blue-400"
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-cyan-300 to-blue-400"
                   style={{ 
                     textShadow: '0 0 100px #f9a8d4',
                     WebkitTextStroke: '2px rgba(255,255,255,0.3)',
@@ -492,20 +492,30 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
                   a
                 </span>
                 <span 
-                  className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500"
+                  className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500"
                   style={{ 
                     textShadow: '0 0 120px #67e8f9',
                     WebkitTextStroke: '3px rgba(255,255,255,0.4)',
                     fontFamily: 'Impact, sans-serif'
                   }}
                 >
-                  l
+                  n
+                </span>
+                <span 
+                  className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-pink-400"
+                  style={{ 
+                    textShadow: '0 0 120px #a855f7',
+                    WebkitTextStroke: '3px rgba(255,255,255,0.4)',
+                    fontFamily: 'Arial Black, sans-serif'
+                  }}
+                >
+                  o
                 </span>
               </div>
               
               <div className="mt-4">
                 <span 
-                  className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400"
                   style={{ 
                     textShadow: '0 0 120px #a855f7',
                     WebkitTextStroke: '3px rgba(255,255,255,0.4)',
@@ -513,7 +523,7 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
                     letterSpacing: '0.15em'
                   }}
                 >
-                  CODE
+                  CODE CHALLENGE
                 </span>
               </div>
             </motion.div>

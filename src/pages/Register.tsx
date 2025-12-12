@@ -6,27 +6,96 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { CrystalButton } from '@/components/ui/CrystalButton';
 import { FrostInput } from '@/components/ui/FrostInput';
 import { WinterBackground } from '@/components/ui/WinterBackground';
+import { Recaptcha } from '@/components/ui/Recaptcha';
 import { useRegistrationStore } from '@/stores/registrationStore';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, Users, Lightbulb, CheckCircle, Plus, Trash2, Upload } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Users, Lightbulb, CheckCircle, Plus, Trash2, Upload, Shield } from 'lucide-react';
 
-const PrismArtifact = ({ speed = 0.5 }: { speed?: number }) => {
+const CodingSnowman = () => {
   return (
-    <Canvas camera={{ position: [0, 0, 6], fov: 50 }}>
-      <Suspense fallback={null}>
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[5, 5, 5]} intensity={1.5} color="#ffffff" />
-        <pointLight position={[-3, -3, 3]} intensity={1} color="#e1bee7" />
-        <DiamondPrism position={[0, 0, 0]} scale={2.2} rotationSpeed={speed} />
-      </Suspense>
-    </Canvas>
+    <div className="relative w-full h-full flex items-center justify-center">
+      <div className="relative scale-90">
+        
+        {/* Chair */}
+        <div className="absolute bottom-8 left-16">
+          {/* Chair back */}
+          <div className="w-3 h-16 bg-amber-700 rounded-t absolute bottom-8"></div>
+          {/* Chair seat */}
+          <div className="absolute bottom-8 -left-6 w-14 h-3 bg-amber-700 rounded"></div>
+          {/* Chair legs */}
+          <div className="absolute bottom-0 -left-4 w-1 h-8 bg-amber-600"></div>
+          <div className="absolute bottom-0 right-4 w-1 h-8 bg-amber-600"></div>
+          <div className="absolute bottom-0 -left-1 w-1 h-8 bg-amber-600"></div>
+          <div className="absolute bottom-0 right-1 w-1 h-8 bg-amber-600"></div>
+        </div>
+
+        {/* Desk */}
+        <div className="absolute bottom-24 left-20 w-40 h-4 bg-amber-800 rounded shadow-lg">
+          {/* Desk legs */}
+          <div className="absolute bottom-0 left-4 w-2 h-8 bg-amber-700 transform translate-y-full"></div>
+          <div className="absolute bottom-0 right-4 w-2 h-8 bg-amber-700 transform translate-y-full"></div>
+        </div>
+
+        {/* Laptop on desk */}
+        <div className="absolute bottom-28 left-32">
+          {/* Laptop base */}
+          <div className="w-18 h-1 bg-gray-700 rounded"></div>
+          {/* Laptop screen */}
+          <div className="w-16 h-12 bg-gray-900 rounded border transform -rotate-12 -translate-y-1">
+            <div className="p-1 text-green-400 text-[6px] font-mono">
+              {'> code.js'}
+              <br />
+              {'function(){}'}
+            </div>
+          </div>
+        </div>
+
+        {/* Snowman - sitting properly, built from head down */}
+        <div className="absolute bottom-27 left-8">
+          
+          {/* Head - at the very top */}
+          <div className="w-12 h-12 bg-white rounded-full shadow-lg border border-blue-100 relative">
+            {/* ONE eye (side profile) */}
+            <div className="absolute top-3 left-2 w-1 h-1 bg-black rounded-full"></div>
+            
+            {/* Carrot nose pointing RIGHT */}
+            <div className="absolute top-4 right-0 w-0 h-0 border-l-4 border-l-orange-500 border-t-2 border-t-transparent border-b-2 border-b-transparent"></div>
+            
+            {/* Smile dots */}
+            <div className="absolute bottom-2 left-3 w-0.5 h-0.5 bg-black rounded-full"></div>
+            <div className="absolute bottom-2 left-4 w-0.5 h-0.5 bg-black rounded-full"></div>
+          </div>
+
+          {/* Orange scarf around neck */}
+          <div className="absolute top-10 left-1 w-14 h-2 bg-orange-500 rounded shadow"></div>
+          <div className="absolute top-12 left-0 w-2 h-6 bg-orange-500 rounded-b shadow"></div>
+
+          {/* Middle snowball - connected below head */}
+          <div className="w-16 h-16 bg-white rounded-full shadow-lg border border-blue-100 relative mt-2 ml-2">
+            <div className="absolute top-4 left-2 w-1 h-1 bg-black rounded-full"></div>
+            <div className="absolute bottom-4 left-3 w-1 h-1 bg-black rounded-full"></div>
+            
+            {/* Arm reaching toward laptop */}
+            <div className="absolute right-0 top-3 w-10 h-1 bg-white rounded shadow"></div>
+            <div className="absolute right-8 top-2 w-2 h-2 bg-white rounded-full border border-gray-200"></div>
+          </div>
+
+          {/* Bottom snowball - sitting on chair */}
+          <div className="w-20 h-16 bg-white rounded-full shadow-lg border border-blue-100 relative mt-2 ml-0">
+            <div className="absolute top-4 left-2 w-1 h-1 bg-black rounded-full"></div>
+            <div className="absolute bottom-3 left-3 w-1 h-1 bg-black rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
 const steps = [
-  { id: 0, title: 'Team Details', icon: Users },
-  { id: 1, title: 'Project Idea', icon: Lightbulb },
-  { id: 2, title: 'Confirm', icon: CheckCircle },
+  { id: 0, title: 'Verification', icon: Shield },
+  { id: 1, title: 'Team Details', icon: Users },
+  { id: 2, title: 'Project Idea', icon: Lightbulb },
+  { id: 3, title: 'Confirm', icon: CheckCircle },
 ];
 
 const StepIndicator = ({ currentStep }: { currentStep: number }) => {
@@ -66,6 +135,52 @@ const StepIndicator = ({ currentStep }: { currentStep: number }) => {
           )}
         </div>
       ))}
+    </div>
+  );
+};
+
+const VerificationStep = () => {
+  const { data, setVerification } = useRegistrationStore();
+  const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+  
+  const handleRecaptchaVerify = (token: string | null) => {
+    setVerification(token);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-xl font-semibold text-glacier-deep mb-2">
+            Human Verification ❄️
+          </h2>
+        </motion.div>
+      </div>
+      
+      <div className="flex justify-center">
+        <Recaptcha 
+          onVerify={handleRecaptchaVerify} 
+          siteKey={siteKey || 'your_recaptcha_site_key_here'} 
+        />
+      </div>
+      
+      {data.isVerified && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-ice-cyan/20 to-holo-blue/20 border border-ice-cyan/30 rounded-lg text-ice-cyan">
+            <CheckCircle className="w-4 h-4" />
+            <span className="font-medium">Verified!</span>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };
@@ -279,10 +394,12 @@ const Register = () => {
   const isStepValid = useCallback(() => {
     switch (currentStep) {
       case 0:
-        return data.teamName.length > 0 && data.members[0].name.length > 0 && data.members[0].email.length > 0;
+        return data.isVerified;
       case 1:
-        return data.projectIdea.length > 0 && data.experience.length > 0;
+        return data.teamName.length > 0 && data.members[0].name.length > 0 && data.members[0].email.length > 0;
       case 2:
+        return data.projectIdea.length > 0 && data.experience.length > 0;
+      case 3:
         return data.agreeToRules;
       default:
         return false;
@@ -315,13 +432,13 @@ const Register = () => {
             transition={{ delay: 0.3 }}
           >
             <div className="w-full h-[500px] relative">
-              <PrismArtifact speed={0.3 + currentStep * 0.4} />
+              <CodingSnowman />
               
-              {/* Light refraction effect */}
+              {/* Winter sparkle effect */}
               <div 
-                className="absolute inset-0 pointer-events-none opacity-30"
+                className="absolute inset-0 pointer-events-none opacity-20"
                 style={{
-                  background: 'radial-gradient(circle at 50% 50%, hsl(185 100% 80% / 0.3) 0%, transparent 50%)',
+                  background: 'radial-gradient(circle at 50% 50%, hsl(200 100% 80% / 0.3) 0%, transparent 70%)',
                 }}
               />
             </div>
@@ -344,9 +461,10 @@ const Register = () => {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                {currentStep === 0 && <TeamInfoStep />}
-                {currentStep === 1 && <ProjectIdeaStep />}
-                {currentStep === 2 && <ConfirmStep />}
+                {currentStep === 0 && <VerificationStep />}
+                {currentStep === 1 && <TeamInfoStep />}
+                {currentStep === 2 && <ProjectIdeaStep />}
+                {currentStep === 3 && <ConfirmStep />}
               </motion.div>
               
               {/* Navigation */}

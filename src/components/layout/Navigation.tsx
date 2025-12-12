@@ -20,7 +20,7 @@ export const Navigation = () => {
       transition={{ delay: 0.3, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="glass-ice px-6 py-3 flex items-center justify-between">
+        <div className="glass-ice px-6 py-3 flex items-center justify-between border-2 border-white/20 rounded-2xl">
           {/* Logo */}
           <Link to="/" className="group flex items-center gap-3">
             <motion.div
@@ -30,8 +30,10 @@ export const Navigation = () => {
             >
               <Snowflake className="w-5 h-5 text-white" />
             </motion.div>
-            <span className="font-space text-lg font-bold text-glacier-deep tracking-wide hidden sm:block">
-              CRYSTAL CODE
+            <span className="font-space text-lg font-bold text-glacier-deep tracking-wide hidden sm:block" style={{
+              fontFamily: '"Rajdhani", "Orbitron", "Helvetica Neue", sans-serif'
+            }}>
+              NUMERANO CODE CHALLENGE
             </span>
           </Link>
           
