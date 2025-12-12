@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useAudio } from '@/hooks/useAudio';
 
 interface SnowflakeIntroAnimationProps {
   onComplete: () => void;
@@ -58,6 +59,39 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
   const startTime = useRef<number>(Date.now());
   const [phase, setPhase] = useState<string>('entrance');
   const [circlePosition, setCirclePosition] = useState({ x: -100, y: 0 });
+
+  // Audio for the snowflake entrance animation
+  const entranceAudio = useAudio('/audio/snowflake-entrance.mp3', {
+    autoPlay: true, // Auto start with animation
+    loop: false,
+    volume: 0.6,
+    fadeIn: true,
+    fadeInDuration: 1000
+  });
+
+  // Fade out audio when animation is about to complete
+  useEffect(() => {
+    if (phase === 'fadeOut' && entranceAudio.isPlaying) {
+      // Fade out audio over 2 seconds
+      const fadeOutDuration = 2000;
+      const steps = 50;
+      const stepDelay = fadeOutDuration / steps;
+      const volumeStep = entranceAudio.currentVolume / steps;
+      let currentStep = 0;
+      
+      const fadeInterval = setInterval(() => {
+        if (currentStep >= steps || !entranceAudio.audioElement) {
+          clearInterval(fadeInterval);
+          entranceAudio.pause();
+          return;
+        }
+        
+        const newVolume = entranceAudio.currentVolume - (volumeStep * currentStep);
+        entranceAudio.setVolume(Math.max(0, newVolume));
+        currentStep++;
+      }, stepDelay);
+    }
+  }, [phase, entranceAudio]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -440,15 +474,18 @@ export const SnowflakeIntroAnimation = ({ onComplete }: SnowflakeIntroAnimationP
     initBackgroundFlakes();
     initCornerSnowflakes();
     initParticles();
+    
     animate();
 
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      // Stop entrance music when component unmounts
+      entranceAudio.pause();
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [onComplete, phase]);
+  }, [onComplete, phase, entranceAudio]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">

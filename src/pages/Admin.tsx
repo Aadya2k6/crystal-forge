@@ -4,6 +4,7 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { CrystalButton } from '@/components/ui/CrystalButton';
 import { FrostInput } from '@/components/ui/FrostInput';
 import { WinterBackground } from '@/components/ui/WinterBackground';
+import { PdfViewer } from '@/components/ui/PdfViewer';
 import { registrationService, FirebaseRegistrationData } from '@/lib/registrationService';
 import { emailService } from '@/lib/emailService';
 import { 
@@ -17,7 +18,8 @@ import {
   Lock,
   LogOut,
   RefreshCw,
-  Mail
+  Mail,
+  FileText
 } from 'lucide-react';
 
 type TeamStatus = 'pending' | 'approved' | 'rejected';
@@ -49,6 +51,7 @@ const Admin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [emailStatus, setEmailStatus] = useState<{ [key: string]: 'sending' | 'success' | 'failed' }>({});
+  const [showPdfViewer, setShowPdfViewer] = useState(false);
   
   // Helper function to get team avatar based on domain
   const getTeamAvatar = (domain: string) => {
@@ -623,6 +626,39 @@ const Admin = () => {
                     </div>
                   </div>
                   
+                  {/* Student ID Card Section */}
+                  {selectedTeam.firebaseData?.studentIdCard && (
+                    <div className="mb-6">
+                      <h4 className="font-inter text-sm font-medium text-foreground/60 mb-3">Student ID Card</h4>
+                      <div className="p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <FileText className="w-5 h-5 text-cyan-400" />
+                            <div>
+                              <p className="text-white font-medium text-sm">{selectedTeam.firebaseData.studentIdCard.fileName}</p>
+                              <p className="text-white/60 text-xs">
+                                {Math.round(selectedTeam.firebaseData.studentIdCard.fileSize / 1024)} KB • 
+                                Uploaded {new Date(selectedTeam.firebaseData.studentIdCard.uploadedAt).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <motion.button
+                            onClick={() => setShowPdfViewer(true)}
+                            className="px-3 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 text-sm font-medium transition-colors"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            View PDF
+                          </motion.button>
+                        </div>
+                        <p className="text-amber-200 text-xs mt-2 flex items-center gap-1">
+                          <Shield className="w-3 h-3" />
+                          This document will be automatically deleted after your decision
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
                   {selectedTeam.projectIdea && (
                     <div className="mb-6">
                       <h4 className="font-inter text-sm font-medium text-foreground/60 mb-2">Project Idea</h4>
@@ -657,6 +693,16 @@ const Admin = () => {
           )}
         </AnimatePresence>
         </div>
+      )}
+
+      {/* PDF Viewer */}
+      {selectedTeam?.firebaseData?.studentIdCard && (
+        <PdfViewer
+          pdfData={selectedTeam.firebaseData.studentIdCard}
+          isOpen={showPdfViewer}
+          onClose={() => setShowPdfViewer(false)}
+          teamName={selectedTeam.name}
+        />
       )}
     </div>
   );

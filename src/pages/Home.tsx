@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Navigation } from '../components/layout/Navigation';
 import { SnowflakeIntroAnimation } from '../components/animations/SnowflakeIntroAnimation';
 import { GlassCard } from '../components/ui/GlassCard';
@@ -8,6 +9,7 @@ import { WinterBackground } from '../components/ui/WinterBackground';
 import { Snowflake, Trophy, Users, Calendar, Zap, Star, Sparkles, Crown, Heart, ChevronRight, Play, Code2, Gamepad2, Target, DollarSign, Activity, Lightbulb, Brain, Plus, Twitter, Instagram, MessageCircle, ExternalLink, Wifi } from 'lucide-react';
 
 export const Home = () => {
+  const navigate = useNavigate();
   const [showIntro, setShowIntro] = useState(true);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -252,15 +254,17 @@ export const Home = () => {
                     </motion.div>
                     
                     {/* Title */}
-                    <h3 className="text-3xl font-bold text-white mb-4" style={{
-                      fontFamily: '"Oswald", "Impact", "Arial Black", sans-serif'
+                    <h3 className="text-3xl font-semibold text-white mb-4" style={{
+                      fontFamily: '"Inter", "Segoe UI", "system-ui", sans-serif',
+                      letterSpacing: '0.025em'
                     }}>
                       {card.title}
                     </h3>
                     
                     {/* Description */}
-                    <p className="text-white/80 text-lg mb-8 leading-relaxed" style={{
-                      fontFamily: '"Source Sans Pro", "Roboto", "Arial", sans-serif'
+                    <p className="text-white/90 text-lg mb-8 leading-relaxed font-medium" style={{
+                      fontFamily: '"Inter", "system-ui", "Segoe UI", sans-serif',
+                      letterSpacing: '0.01em'
                     }}>
                       {card.description}
                     </p>
@@ -911,6 +915,7 @@ export const Home = () => {
                   className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold px-10 py-5 text-xl relative overflow-hidden group"
                   onMouseEnter={() => setIsGlowing(true)}
                   onMouseLeave={() => setIsGlowing(false)}
+                  onClick={() => navigate('/register')}
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
@@ -919,7 +924,7 @@ export const Home = () => {
                     transition={{ duration: 0.8 }}
                   />
                   <Play className="w-5 h-5 mr-3" />
-                  Start Challenge
+                  Register Now
                   <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </CrystalButton>
               </motion.div>
@@ -1140,6 +1145,7 @@ export const Home = () => {
           `
         }} />
       </footer>
+
     </div>
   );
 };

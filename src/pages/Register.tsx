@@ -7,87 +7,146 @@ import { CrystalButton } from '@/components/ui/CrystalButton';
 import { FrostInput } from '@/components/ui/FrostInput';
 import { WinterBackground } from '@/components/ui/WinterBackground';
 import { Recaptcha } from '@/components/ui/Recaptcha';
+import { IdCardUpload } from '@/components/ui/IdCardUpload';
 import { useRegistrationStore } from '@/stores/registrationStore';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Users, Lightbulb, CheckCircle, Plus, Trash2, Shield } from 'lucide-react';
 
 const CodingSnowman = () => {
   return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      <div className="relative scale-90">
+    <motion.div
+      className="absolute left-8 top-1/2 transform -translate-y-1/2 z-20 scale-125"
+      initial={{ x: -100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 1, delay: 0.5 }}
+    >
+      {/* Snowman body - centered container */}
+      <div className="relative flex flex-col items-center">
+        {/* Developer Beanie/Hat */}
+        <div className="relative z-10 -mb-2">
+          <div className="w-16 h-10 bg-gradient-to-b from-purple-600 to-purple-700 rounded-t-full mx-auto shadow-lg"></div>
+          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-sm text-white font-bold">DEV</div>
+        </div>
         
-        {/* Chair */}
-        <div className="absolute bottom-8 left-16">
-          {/* Chair back */}
-          <div className="w-3 h-16 bg-amber-700 rounded-t absolute bottom-8"></div>
-          {/* Chair seat */}
-          <div className="absolute bottom-8 -left-6 w-14 h-3 bg-amber-700 rounded"></div>
-          {/* Chair legs */}
-          <div className="absolute bottom-0 -left-4 w-1 h-8 bg-amber-600"></div>
-          <div className="absolute bottom-0 right-4 w-1 h-8 bg-amber-600"></div>
-          <div className="absolute bottom-0 -left-1 w-1 h-8 bg-amber-600"></div>
-          <div className="absolute bottom-0 right-1 w-1 h-8 bg-amber-600"></div>
+        {/* Head */}
+        <div className="w-20 h-20 bg-gradient-to-br from-white to-blue-50 rounded-full shadow-xl relative border-2 border-blue-100 -mb-5 z-20">
+          {/* Glasses - coding style */}
+          <div className="absolute top-5 left-1/2 transform -translate-x-1/2 flex">
+            <div className="w-5 h-5 border-2 border-gray-800 rounded bg-blue-100/30"></div>
+            <div className="w-1.5 h-0.5 bg-gray-800 mt-2.5"></div>
+            <div className="w-5 h-5 border-2 border-gray-800 rounded bg-blue-100/30"></div>
+          </div>
+          {/* Eyes through glasses */}
+          <div className="absolute top-6 left-5 w-2 h-2 bg-gray-900 rounded-full"></div>
+          <div className="absolute top-6 right-5 w-2 h-2 bg-gray-900 rounded-full"></div>
+          {/* Small smile */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-0.5">
+            <div className="w-0.5 h-0.5 bg-gray-900 rounded-full"></div>
+            <div className="w-0.5 h-0.5 bg-gray-900 rounded-full"></div>
+            <div className="w-0.5 h-0.5 bg-gray-900 rounded-full"></div>
+          </div>
         </div>
-
-        {/* Desk */}
-        <div className="absolute bottom-24 left-20 w-40 h-4 bg-amber-800 rounded shadow-lg">
-          {/* Desk legs */}
-          <div className="absolute bottom-0 left-4 w-2 h-8 bg-amber-700 transform translate-y-full"></div>
-          <div className="absolute bottom-0 right-4 w-2 h-8 bg-amber-700 transform translate-y-full"></div>
+        
+        {/* Hoodie collar */}
+        <div className="relative z-30 -mb-3">
+          <div className="w-22 h-4 bg-gradient-to-b from-gray-700 to-gray-800 rounded-t-lg shadow-md"></div>
         </div>
-
-        {/* Laptop on desk */}
-        <div className="absolute bottom-28 left-32">
-          {/* Laptop base */}
-          <div className="w-18 h-1 bg-gray-700 rounded"></div>
-          {/* Laptop screen */}
-          <div className="w-16 h-12 bg-gray-900 rounded border transform -rotate-12 -translate-y-1">
-            <div className="p-1 text-green-400 text-[6px] font-mono">
-              {'> code.js'}
-              <br />
-              {'function(){}'}
+        
+        {/* Middle body with hoodie */}
+        <div className="w-26 h-26 bg-gradient-to-br from-white to-blue-50 rounded-full relative shadow-xl border-2 border-blue-100 -mb-8 z-10">
+          {/* Hoodie/Sweater */}
+          <div className="absolute inset-2 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full overflow-hidden">
+            {/* Code text on hoodie */}
+            <div className="absolute top-3 left-1/2 transform -translate-x-1/2 text-green-400 text-sm font-mono">
+              {'</>'}
+            </div>
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-cyan-400 text-xs font-mono">
+              {'Hello World'}
             </div>
           </div>
-        </div>
-
-        {/* Snowman - sitting properly, built from head down */}
-        <div className="absolute bottom-27 left-8">
           
-          {/* Head - at the very top */}
-          <div className="w-12 h-12 bg-white rounded-full shadow-lg border border-blue-100 relative">
-            {/* ONE eye (side profile) */}
-            <div className="absolute top-3 left-2 w-1 h-1 bg-black rounded-full"></div>
-            
-            {/* Carrot nose pointing RIGHT */}
-            <div className="absolute top-4 right-0 w-0 h-0 border-l-4 border-l-orange-500 border-t-2 border-t-transparent border-b-2 border-b-transparent"></div>
-            
-            {/* Smile dots */}
-            <div className="absolute bottom-2 left-3 w-0.5 h-0.5 bg-black rounded-full"></div>
-            <div className="absolute bottom-2 left-4 w-0.5 h-0.5 bg-black rounded-full"></div>
+          {/* Left arm - typing gesture */}
+          <motion.div
+            className="absolute top-8 -left-4 w-12 h-3 bg-gradient-to-r from-white to-blue-50 rounded-full shadow-md origin-right transform rotate-12"
+            animate={{ rotate: [12, 8, 15, 8, 12] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {/* Left hand - typing */}
+          <motion.div
+            className="absolute top-5 -left-15 w-4 h-4 bg-white rounded-full shadow-md border border-blue-200"
+            animate={{ y: [0, -1, 0.5, -1, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+          
+          {/* Right arm - holding coffee */}
+          <div className="absolute top-6 -right-3 w-10 h-3 bg-gradient-to-l from-white to-blue-50 rounded-full shadow-md transform -rotate-12 origin-left"></div>
+          {/* Right hand with coffee cup */}
+          <div className="absolute top-3 -right-10 w-4 h-4 bg-white rounded-full shadow-md border border-blue-200"></div>
+          {/* Coffee cup */}
+          <div className="absolute top-1 -right-12 w-3 h-4 bg-gradient-to-b from-amber-800 to-amber-900 rounded-b border border-amber-700"></div>
+          <div className="absolute top-0 -right-12 w-3 h-1 bg-amber-600 rounded-full"></div>
+          {/* Steam from coffee */}
+          <motion.div
+            className="absolute -top-2 -right-11 text-gray-400 text-xs"
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            ~~~
+          </motion.div>
+        </div>
+        
+        {/* Bottom body */}
+        <div className="w-30 h-30 bg-gradient-to-br from-white to-blue-50 rounded-full relative shadow-xl border-2 border-blue-100">
+          {/* Laptop on lap */}
+          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+            {/* Laptop base */}
+            <div className="w-15 h-2 bg-gray-800 rounded shadow-md"></div>
+            {/* Laptop screen */}
+            <div className="w-12 h-8 bg-gray-900 rounded border transform -rotate-12 -translate-y-1 ml-1.5">
+              <div className="p-1.5 text-green-400 text-xs font-mono leading-tight">
+                {'function register() {'}
+                <br />
+                {'  return "success";'}
+                <br />
+                {'}'}
+              </div>
+            </div>
           </div>
-
-          {/* Orange scarf around neck */}
-          <div className="absolute top-10 left-1 w-14 h-2 bg-orange-500 rounded shadow"></div>
-          <div className="absolute top-12 left-0 w-2 h-6 bg-orange-500 rounded-b shadow"></div>
-
-          {/* Middle snowball - connected below head */}
-          <div className="w-16 h-16 bg-white rounded-full shadow-lg border border-blue-100 relative mt-2 ml-2">
-            <div className="absolute top-4 left-2 w-1 h-1 bg-black rounded-full"></div>
-            <div className="absolute bottom-4 left-3 w-1 h-1 bg-black rounded-full"></div>
-            
-            {/* Arm reaching toward laptop */}
-            <div className="absolute right-0 top-3 w-10 h-1 bg-white rounded shadow"></div>
-            <div className="absolute right-8 top-2 w-2 h-2 bg-white rounded-full border border-gray-200"></div>
-          </div>
-
-          {/* Bottom snowball - sitting on chair */}
-          <div className="w-20 h-16 bg-white rounded-full shadow-lg border border-blue-100 relative mt-2 ml-0">
-            <div className="absolute top-4 left-2 w-1 h-1 bg-black rounded-full"></div>
-            <div className="absolute bottom-3 left-3 w-1 h-1 bg-black rounded-full"></div>
+          
+          {/* Code pattern buttons */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 space-y-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full shadow-sm"></div>
+            <div className="w-2 h-2 bg-blue-500 rounded-full shadow-sm"></div>
+            <div className="w-2 h-2 bg-purple-500 rounded-full shadow-sm"></div>
           </div>
         </div>
+        
+        {/* Floating code elements around snowman */}
+        <motion.div
+          className="absolute -top-10 -right-8 text-blue-400 text-lg font-mono"
+          animate={{ y: [-2, 2, -2], opacity: [0.7, 1, 0.7] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        >
+          {'{}'}
+        </motion.div>
+        
+        <motion.div
+          className="absolute top-6 -left-12 text-green-400 text-lg font-mono"
+          animate={{ x: [-1, 1, -1], opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
+        >
+          {'[]'}
+        </motion.div>
+        
+        <motion.div
+          className="absolute bottom-12 -right-6 text-purple-400 text-lg font-mono"
+          animate={{ rotate: [0, 10, -10, 0], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        >
+          {'()'}
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -260,7 +319,7 @@ const TeamInfoStep = () => {
 };
 
 const ProjectIdeaStep = () => {
-  const { data, updateData } = useRegistrationStore();
+  const { data, updateData, setIdCard, error } = useRegistrationStore();
   
   const domains = [
     'Web Development', 'AI/ML', 'Mobile Development', 'IoT', 'Blockchain'
@@ -306,6 +365,15 @@ const ProjectIdeaStep = () => {
           placeholder="Describe your project idea briefly..."
           value={data.projectIdea}
           onChange={(e) => updateData({ projectIdea: e.target.value })}
+        />
+      </div>
+
+      {/* Student ID Card Upload */}
+      <div className="mt-8">
+        <IdCardUpload
+          value={data.studentIdCard || null}
+          onChange={setIdCard}
+          error={error}
         />
       </div>
     </div>
@@ -417,7 +485,8 @@ const Register = () => {
       case 2:
         return data.projectTitle.length > 0 && 
                data.projectIdea.length > 0 && 
-               data.domain.length > 0;
+               data.domain.length > 0 &&
+               data.studentIdCard !== null;
       case 3:
         return data.agreeToRules;
       default:

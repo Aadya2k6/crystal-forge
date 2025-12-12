@@ -25,6 +25,7 @@ class RegistrationService {
         projectTitle: data.projectTitle,
         domain: data.domain,
         agreeToRules: data.agreeToRules,
+        studentIdCard: data.studentIdCard, // Include ID card temporarily for verification
         teamId: teamId,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -92,11 +93,22 @@ class RegistrationService {
   async updateStatus(id: string, status: 'pending' | 'approved' | 'rejected'): Promise<void> {
     try {
       const docRef = doc(db, this.collectionName, id);
-      await updateDoc(docRef, {
+      const updateData: any = {
         status: status,
         updatedAt: Timestamp.now()
-      });
+      };
+      
+      // Remove student ID card after admin decision (approved or rejected)
+      if (status === 'approved' || status === 'rejected') {
+        updateData.studentIdCard = null;
+      }
+      
+      await updateDoc(docRef, updateData);
       console.log(`Registration ${id} status updated to ${status}`);
+      
+      if (status === 'approved' || status === 'rejected') {
+        console.log(`Student ID card removed from registration ${id} for privacy`);
+      }
     } catch (error) {
       console.error('Error updating registration status: ', error);
       throw new Error('Failed to update registration status.');

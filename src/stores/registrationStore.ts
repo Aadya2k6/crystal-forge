@@ -17,6 +17,12 @@ export interface RegistrationData {
   agreeToRules: boolean;
   isVerified: boolean;
   recaptchaToken: string | null;
+  studentIdCard?: {
+    fileName: string;
+    fileSize: number;
+    base64Data: string;
+    uploadedAt: number;
+  } | null;
 }
 
 interface RegistrationStore {
@@ -33,6 +39,7 @@ interface RegistrationStore {
   removeMember: (index: number) => void;
   setTeamId: (id: string) => void;
   setVerification: (token: string | null) => void;
+  setIdCard: (file: File | null) => Promise<void>;
   submitRegistration: () => Promise<string>;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -99,6 +106,48 @@ export const useRegistrationStore = create<RegistrationStore>((set, get) => ({
       recaptchaToken: token,
     },
   })),
+
+  setIdCard: async (file) => {
+    if (!file) {
+      set((state) => ({
+        data: { ...state.data, studentIdCard: null }
+      }));
+      return;
+    }
+
+    // Validate file type and size
+    if (file.type !== 'application/pdf') {
+      throw new Error('Please upload a PDF file');
+    }
+    
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      throw new Error('File size must be less than 5MB');
+    }
+
+    try {
+      // Convert to base64
+      const base64Data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      set((state) => ({
+        data: {
+          ...state.data,
+          studentIdCard: {
+            fileName: file.name,
+            fileSize: file.size,
+            base64Data,
+            uploadedAt: Date.now()
+          }
+        }
+      }));
+    } catch (error) {
+      throw new Error('Failed to process the file');
+    }
+  },
 
   submitRegistration: async () => {
     const { data } = get();
