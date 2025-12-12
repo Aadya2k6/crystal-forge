@@ -4,6 +4,7 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { CrystalButton } from '@/components/ui/CrystalButton';
 import { FrostInput } from '@/components/ui/FrostInput';
 import { WinterBackground } from '@/components/ui/WinterBackground';
+import { registrationService, FirebaseRegistrationData } from '@/lib/registrationService';
 import { Search, CheckCircle, Clock, XCircle, Snowflake } from 'lucide-react';
 
 // Classy Snowman component for left side
@@ -205,35 +206,45 @@ const RightSnowman = () => {
   );
 };
 
-type StatusType = 'idle' | 'verified' | 'pending' | 'rejected';
+type StatusType = 'idle' | 'approved' | 'pending' | 'rejected' | 'not-found';
 
 const Status = () => {
   const [teamId, setTeamId] = useState('');
   const [status, setStatus] = useState<StatusType>('idle');
   const [isChecking, setIsChecking] = useState(false);
+  const [teamData, setTeamData] = useState<FirebaseRegistrationData | null>(null);
+  const [error, setError] = useState('');
   
-  const handleCheck = () => {
+  const handleCheck = async () => {
     if (!teamId.trim()) return;
     
     setIsChecking(true);
+    setError('');
     
-    // Simulate API call
-    setTimeout(() => {
-      // Demo logic - check based on team ID pattern
-      if (teamId.toUpperCase().includes('ICE')) {
-        setStatus('verified');
-      } else if (teamId.toUpperCase().includes('PEND')) {
-        setStatus('pending');
+    try {
+      const registration = await registrationService.getRegistrationByTeamId(teamId.trim().toUpperCase());
+      
+      if (registration) {
+        setTeamData(registration);
+        setStatus(registration.status);
       } else {
-        setStatus('rejected');
+        setStatus('not-found');
+        setTeamData(null);
       }
+    } catch (err) {
+      console.error('Error checking team status:', err);
+      setError('Failed to check team status. Please try again.');
+      setStatus('idle');
+    } finally {
       setIsChecking(false);
-    }, 1500);
+    }
   };
   
   const resetStatus = () => {
     setStatus('idle');
     setTeamId('');
+    setTeamData(null);
+    setError('');
   };
   
   return (
@@ -283,14 +294,26 @@ const Status = () => {
               <div className="space-y-6">
                 <FrostInput
                   label="Team ID"
-                  placeholder="e.g., ICE-MYTEAM-123"
+                  placeholder="e.g., ICE-ABCD-XYZ"
                   value={teamId}
                   onChange={(e) => setTeamId(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleCheck()}
                 />
+                
+                {error && (
+                  <motion.div
+                    className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    {error}
+                  </motion.div>
+                )}
                 
                 <CrystalButton
                   onClick={handleCheck}
                   isLoading={isChecking}
+                  disabled={!teamId.trim()}
                   className="w-full"
                 >
                   <Search className="w-4 h-4 mr-2" />
@@ -304,7 +327,7 @@ const Status = () => {
                 className="text-center py-8"
               >
                 {/* Status Display */}
-                {status === 'verified' && (
+                {status === 'approved' && (
                   <>
                     <motion.div
                       className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-success to-success/80 flex items-center justify-center shadow-glow-success"
@@ -315,11 +338,34 @@ const Status = () => {
                       <CheckCircle className="w-12 h-12 text-white" />
                     </motion.div>
                     <h3 className="font-space text-2xl text-success font-bold mb-2">
-                      ACCESS GRANTED
+                      Team Approved! 🎉
                     </h3>
                     <p className="font-inter text-foreground/60 mb-6">
-                      Your team is verified and ready for the hackathon!
+                      Congratulations! Your team has been approved for the hackathon.
                     </p>
+                    
+                    {teamData && (
+                      <div className="space-y-4 text-left bg-success/5 p-6 rounded-lg border border-success/20">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <span className="font-inter text-sm text-foreground/60">Team Name:</span>
+                            <p className="font-inter font-medium text-foreground">{teamData.teamName}</p>
+                          </div>
+                          <div>
+                            <span className="font-inter text-sm text-foreground/60">Domain:</span>
+                            <p className="font-inter font-medium text-foreground">{teamData.domain}</p>
+                          </div>
+                          <div>
+                            <span className="font-inter text-sm text-foreground/60">Project Title:</span>
+                            <p className="font-inter font-medium text-foreground">{teamData.projectTitle}</p>
+                          </div>
+                          <div>
+                            <span className="font-inter text-sm text-foreground/60">Team Size:</span>
+                            <p className="font-inter font-medium text-foreground">{teamData.teamSize} members</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </>
                 )}
                 
@@ -342,7 +388,7 @@ const Status = () => {
                   </>
                 )}
                 
-                {status === 'rejected' && (
+                {(status === 'rejected' || status === 'not-found') && (
                   <>
                     {/* Frost crack effect */}
                     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
@@ -374,10 +420,12 @@ const Status = () => {
                       <XCircle className="w-12 h-12 text-white" />
                     </motion.div>
                     <h3 className="font-space text-2xl text-destructive font-bold mb-2 relative z-10">
-                      Team Not Found
+                      {status === 'not-found' ? 'Team Not Found' : 'Application Rejected'}
                     </h3>
                     <p className="font-inter text-foreground/60 mb-6 relative z-10">
-                      We couldn't find a team with this ID. Please check and try again.
+                      {status === 'not-found' 
+                        ? 'We could not find a team with this ID. Please check and try again.' 
+                        : 'Unfortunately, your team application was not approved for this hackathon.'}
                     </p>
                   </>
                 )}

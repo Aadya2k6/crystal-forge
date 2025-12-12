@@ -9,7 +9,7 @@ import { WinterBackground } from '@/components/ui/WinterBackground';
 import { Recaptcha } from '@/components/ui/Recaptcha';
 import { useRegistrationStore } from '@/stores/registrationStore';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, Users, Lightbulb, CheckCircle, Plus, Trash2, Upload, Shield } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Users, Lightbulb, CheckCircle, Plus, Trash2, Shield } from 'lucide-react';
 
 const CodingSnowman = () => {
   return (
@@ -191,7 +191,7 @@ const TeamInfoStep = () => {
   return (
     <div className="space-y-6">
       <FrostInput
-        label="Team Name"
+        label="Team Name *"
         placeholder="Enter your team name"
         value={data.teamName}
         onChange={(e) => updateData({ teamName: e.target.value })}
@@ -200,7 +200,7 @@ const TeamInfoStep = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <label className="font-inter text-sm font-medium text-foreground/70">
-            Team Members
+            Team Members *
           </label>
           {data.members.length < 4 && (
             <motion.button
@@ -262,116 +262,125 @@ const TeamInfoStep = () => {
 const ProjectIdeaStep = () => {
   const { data, updateData } = useRegistrationStore();
   
+  const domains = [
+    'Web Development', 'AI/ML', 'Mobile Development', 'IoT', 'Blockchain'
+  ];
+  
   return (
     <div className="space-y-6">
       <div>
         <label className="block mb-2 font-inter text-sm font-medium text-foreground/70">
-          Project Idea
+          Project Title *
         </label>
-        <textarea
-          className="input-frost min-h-[140px] resize-none"
-          placeholder="Describe your project idea briefly..."
-          value={data.projectIdea}
-          onChange={(e) => updateData({ projectIdea: e.target.value })}
+        <FrostInput
+          placeholder="Enter your project title..."
+          value={data.projectTitle}
+          onChange={(e) => updateData({ projectTitle: e.target.value })}
         />
       </div>
       
       <div>
         <label className="block mb-3 font-inter text-sm font-medium text-foreground/70">
-          Team Experience Level
+          Domain *
         </label>
-        <div className="grid grid-cols-3 gap-4">
-          {['Beginner', 'Intermediate', 'Expert'].map((level) => (
-            <motion.button
-              key={level}
-              onClick={() => updateData({ experience: level })}
-              className={`
-                p-4 rounded-xl border-2 font-inter font-medium transition-all
-                ${data.experience === level 
-                  ? 'border-ice-cyan bg-ice-cyan/10 text-primary shadow-glow-cyan' 
-                  : 'border-border bg-white/50 text-foreground/60 hover:border-ice-cyan/50'}
-              `}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {level}
-            </motion.button>
+        <select
+          value={data.domain}
+          onChange={(e) => updateData({ domain: e.target.value })}
+          className="w-full px-4 py-3 rounded-xl bg-white/50 backdrop-blur-sm border border-border focus:border-ice-cyan focus:ring-1 focus:ring-ice-cyan transition-colors font-inter text-foreground"
+        >
+          <option value="">Select a domain</option>
+          {domains.map((domain) => (
+            <option key={domain} value={domain}>
+              {domain}
+            </option>
           ))}
-        </div>
+        </select>
       </div>
       
-      {/* File Upload Zone */}
       <div>
-        <label className="block mb-3 font-inter text-sm font-medium text-foreground/70">
-          ID Card Upload (Optional)
+        <label className="block mb-2 font-inter text-sm font-medium text-foreground/70">
+          Project Description *
         </label>
-        <motion.div
-          className="relative p-8 rounded-xl border-2 border-dashed border-ice-cyan/40 bg-ice-frost/50 flex flex-col items-center justify-center cursor-pointer transition-all hover:border-ice-cyan hover:bg-ice-cyan/5"
-          whileHover={{ scale: 1.01 }}
-        >
-          <Upload className="w-10 h-10 text-primary/60 mb-3" />
-          <p className="font-inter text-sm text-foreground/60 text-center">
-            Drag & drop your ID card here, or <span className="text-primary">browse</span>
-          </p>
-          <p className="font-inter text-xs text-foreground/40 mt-1">
-            PNG, JPG up to 5MB
-          </p>
-        </motion.div>
+        <textarea
+          className="input-frost min-h-[120px] resize-none"
+          placeholder="Describe your project idea briefly..."
+          value={data.projectIdea}
+          onChange={(e) => updateData({ projectIdea: e.target.value })}
+        />
       </div>
     </div>
   );
 };
 
 const ConfirmStep = () => {
-  const { data, updateData } = useRegistrationStore();
+  const { data } = useRegistrationStore();
   
   return (
     <div className="space-y-6">
-      <div className="p-6 rounded-xl bg-gradient-to-br from-ice-frost to-white border border-border">
-        <h4 className="font-space text-lg text-glacier-deep font-semibold mb-6">Registration Summary</h4>
+      <div className="glass-card p-6 space-y-4">
+        <h3 className="font-space text-xl font-semibold text-gradient mb-4">
+          Registration Summary
+        </h3>
         
-        <div className="space-y-4 font-inter text-sm">
-          <div className="flex justify-between py-2 border-b border-border">
-            <span className="text-foreground/60">Team Name</span>
-            <span className="text-foreground font-medium">{data.teamName || 'Not set'}</span>
+        <div className="space-y-3">
+          <div>
+            <span className="font-inter text-sm text-foreground/70">Team Name:</span>
+            <p className="font-inter font-medium text-foreground">{data.teamName}</p>
           </div>
-          <div className="flex justify-between py-2 border-b border-border">
-            <span className="text-foreground/60">Team Size</span>
-            <span className="text-foreground font-medium">{data.members.length} member(s)</span>
+          
+          <div>
+            <span className="font-inter text-sm text-foreground/70">Project Title:</span>
+            <p className="font-inter font-medium text-foreground">{data.projectTitle}</p>
           </div>
-          <div className="flex justify-between py-2 border-b border-border">
-            <span className="text-foreground/60">Experience Level</span>
-            <span className="text-foreground font-medium">{data.experience || 'Not set'}</span>
+          
+          <div>
+            <span className="font-inter text-sm text-foreground/70">Domain:</span>
+            <p className="font-inter font-medium text-foreground">{data.domain}</p>
           </div>
-          <div className="pt-2">
-            <span className="text-foreground/60">Project Idea</span>
-            <p className="text-foreground font-medium mt-1">{data.projectIdea || 'Not provided'}</p>
+          
+          <div>
+            <span className="font-inter text-sm text-foreground/70">Team Size:</span>
+            <p className="font-inter font-medium text-foreground">{data.teamSize} members</p>
+          </div>
+          
+          <div>
+            <span className="font-inter text-sm text-foreground/70">Project Description:</span>
+            <p className="font-inter font-medium text-foreground text-sm">{data.projectIdea}</p>
           </div>
         </div>
       </div>
       
-      <motion.label
-        className="flex items-start gap-4 cursor-pointer group p-4 rounded-xl bg-white/50 border border-border hover:border-ice-cyan/50 transition-colors"
-        whileHover={{ x: 2 }}
-      >
+      <div className="flex items-center space-x-2">
         <input
           type="checkbox"
+          id="agree-rules"
           checked={data.agreeToRules}
-          onChange={(e) => updateData({ agreeToRules: e.target.checked })}
-          className="mt-1 w-5 h-5 rounded border-ice-cyan/50 text-primary focus:ring-primary/50"
+          onChange={(e) => {
+            const { updateData } = useRegistrationStore.getState();
+            updateData({ agreeToRules: e.target.checked });
+          }}
+          className="w-4 h-4 rounded border-border bg-background text-primary focus:ring-primary"
         />
-        <span className="font-inter text-sm text-foreground/70 group-hover:text-foreground transition-colors">
-          I agree to the hackathon rules and code of conduct. I understand that all submissions 
-          must be original work created during the event.
-        </span>
-      </motion.label>
+        <label htmlFor="agree-rules" className="font-inter text-sm text-foreground/70">
+          I agree to the hackathon rules and terms of participation
+        </label>
+      </div>
     </div>
   );
 };
 
 const Register = () => {
   const navigate = useNavigate();
-  const { currentStep, setStep, data, setTeamId } = useRegistrationStore();
+  const { 
+    currentStep, 
+    setStep, 
+    data, 
+    setTeamId, 
+    isLoading,
+    error,
+    submitRegistration,
+    setError 
+  } = useRegistrationStore();
   
   const handleNext = useCallback(() => {
     if (currentStep < steps.length - 1) {
@@ -385,20 +394,30 @@ const Register = () => {
     }
   }, [currentStep, setStep]);
   
-  const handleSubmit = useCallback(() => {
-    const id = `ICE-${data.teamName.toUpperCase().replace(/\s+/g, '-').slice(0, 8)}-${Math.floor(Math.random() * 1000)}`;
-    setTeamId(id);
-    navigate('/success');
-  }, [data.teamName, navigate, setTeamId]);
+  const handleSubmit = useCallback(async () => {
+    try {
+      const docId = await submitRegistration();
+      console.log('Registration submitted with ID:', docId);
+      navigate('/success');
+    } catch (error) {
+      console.error('Registration submission failed:', error);
+      // Error is already handled by the store, UI will show the error
+    }
+  }, [submitRegistration, navigate]);
   
   const isStepValid = useCallback(() => {
     switch (currentStep) {
       case 0:
         return data.isVerified;
       case 1:
-        return data.teamName.length > 0 && data.members[0].name.length > 0 && data.members[0].email.length > 0;
+        return data.teamName.length > 0 && 
+               data.members[0].name.length > 0 && 
+               data.members[0].email.length > 0 &&
+               data.members.every(member => member.email ? member.email.includes('@') && member.email.includes('.') : true);
       case 2:
-        return data.projectIdea.length > 0 && data.experience.length > 0;
+        return data.projectTitle.length > 0 && 
+               data.projectIdea.length > 0 && 
+               data.domain.length > 0;
       case 3:
         return data.agreeToRules;
       default:
@@ -468,35 +487,56 @@ const Register = () => {
               </motion.div>
               
               {/* Navigation */}
-              <div className="flex items-center justify-between mt-10 pt-8 border-t border-border">
-                {currentStep > 0 ? (
-                  <CrystalButton
-                    variant="secondary"
-                    onClick={handlePrev}
+              <div className="flex flex-col space-y-4">
+                {/* Error Display */}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-400 text-sm text-center"
                   >
-                    <ChevronLeft className="w-4 h-4 mr-1" />
-                    Back
-                  </CrystalButton>
-                ) : (
-                  <div />
+                    {error}
+                  </motion.div>
                 )}
                 
-                {currentStep < steps.length - 1 ? (
-                  <CrystalButton
-                    onClick={handleNext}
-                    disabled={!isStepValid()}
-                  >
-                    Continue
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </CrystalButton>
-                ) : (
-                  <CrystalButton
-                    onClick={handleSubmit}
-                    disabled={!isStepValid()}
-                  >
-                    Submit Registration
-                  </CrystalButton>
-                )}
+                <div className="flex items-center justify-between pt-8 border-t border-border">
+                  {currentStep > 0 ? (
+                    <CrystalButton
+                      variant="secondary"
+                      onClick={handlePrev}
+                      disabled={isLoading}
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-1" />
+                      Back
+                    </CrystalButton>
+                  ) : (
+                    <div />
+                  )}
+                  
+                  {currentStep < steps.length - 1 ? (
+                    <CrystalButton
+                      onClick={handleNext}
+                      disabled={!isStepValid() || isLoading}
+                    >
+                      Continue
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </CrystalButton>
+                  ) : (
+                    <CrystalButton
+                      onClick={handleSubmit}
+                      disabled={!isStepValid() || isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                          Submitting...
+                        </>
+                      ) : (
+                        'Submit Registration'
+                      )}
+                    </CrystalButton>
+                  )}
+                </div>
               </div>
             </GlassCard>
           </motion.div>

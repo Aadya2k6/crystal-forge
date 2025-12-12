@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { CrystalButton } from '@/components/ui/CrystalButton';
 import { FrostInput } from '@/components/ui/FrostInput';
 import { WinterBackground } from '@/components/ui/WinterBackground';
+import { registrationService, FirebaseRegistrationData } from '@/lib/registrationService';
 import { 
   CheckCircle, 
   XCircle, 
@@ -13,26 +14,23 @@ import {
   X,
   Shield,
   Lock,
-  LogOut
+  LogOut,
+  RefreshCw
 } from 'lucide-react';
-
-// Mock data
-const mockTeams: Team[] = [
-  { id: 'ICE-AURORA-123', name: 'Team Aurora', captain: 'Alice Johnson', members: 4, status: 'pending' as const, avatar: '🌌' },
-  { id: 'ICE-FROST-456', name: 'Frost Giants', captain: 'Bob Smith', members: 3, status: 'approved' as const, avatar: '❄️' },
-  { id: 'ICE-CRYSTAL-789', name: 'Crystal Clear', captain: 'Carol White', members: 2, status: 'pending' as const, avatar: '💎' },
-  { id: 'ICE-SNOW-012', name: 'Snow Storm', captain: 'David Brown', members: 4, status: 'rejected' as const, avatar: '🌨️' },
-  { id: 'ICE-GLACIER-345', name: 'Glacier Force', captain: 'Eve Davis', members: 3, status: 'pending' as const, avatar: '🏔️' },
-];
 
 type TeamStatus = 'pending' | 'approved' | 'rejected';
 type Team = {
   id: string;
+  teamId: string;
   name: string;
   captain: string;
   members: number;
   status: TeamStatus;
   avatar: string;
+  projectTitle?: string;
+  domain?: string;
+  projectIdea?: string;
+  createdAt?: any;
 };
 
 
@@ -41,9 +39,64 @@ const Admin = () => {
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [teams, setTeams] = useState<Team[]>(mockTeams);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  // Helper function to get team avatar based on domain
+  const getTeamAvatar = (domain: string) => {
+    const avatars = {
+      'Web Development': '🌐',
+      'AI/ML': '🤖',
+      'Mobile Development': '📱',
+      'IoT': '🔌',
+      'Blockchain': '⛓️'
+    };
+    return avatars[domain as keyof typeof avatars] || '💎';
+  };
+
+  // Convert Firebase data to Team format
+  const convertFirebaseToTeam = (fbData: FirebaseRegistrationData): Team => {
+    const captain = fbData.members[0]?.email || 'Unknown Captain';
+    return {
+      id: fbData.id || '',
+      teamId: fbData.teamId || '',
+      name: fbData.teamName,
+      captain: captain,
+      members: fbData.teamSize,
+      status: fbData.status,
+      avatar: getTeamAvatar(fbData.domain || ''),
+      projectTitle: fbData.projectTitle,
+      domain: fbData.domain,
+      projectIdea: fbData.projectIdea,
+      createdAt: fbData.createdAt
+    };
+  };
+
+  // Load teams from Firebase
+  const loadTeams = async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const registrations = await registrationService.getAllRegistrations();
+      const teamsData = registrations.map(convertFirebaseToTeam);
+      setTeams(teamsData);
+    } catch (err) {
+      setError('Failed to load teams. Please try again.');
+      console.error('Error loading teams:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Load teams when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadTeams();
+    }
+  }, [isAuthenticated]);
   
   // Simple authentication - in real app, use proper authentication
   const handleLogin = async () => {
@@ -71,20 +124,33 @@ const Admin = () => {
   const filteredTeams = teams.filter(
     team => 
       team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      team.teamId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       team.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       team.captain.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
-  const handleApprove = (teamId: string) => {
-    setTeams(teams.map(team => 
-      team.id === teamId ? { ...team, status: 'approved' as TeamStatus } : team
-    ));
+  const handleApprove = async (teamId: string) => {
+    try {
+      await registrationService.updateStatus(teamId, 'approved');
+      setTeams(teams.map(team => 
+        team.id === teamId ? { ...team, status: 'approved' as TeamStatus } : team
+      ));
+    } catch (err) {
+      console.error('Error approving team:', err);
+      setError('Failed to approve team. Please try again.');
+    }
   };
   
-  const handleReject = (teamId: string) => {
-    setTeams(teams.map(team => 
-      team.id === teamId ? { ...team, status: 'rejected' as TeamStatus } : team
-    ));
+  const handleReject = async (teamId: string) => {
+    try {
+      await registrationService.updateStatus(teamId, 'rejected');
+      setTeams(teams.map(team => 
+        team.id === teamId ? { ...team, status: 'rejected' as TeamStatus } : team
+      ));
+    } catch (err) {
+      console.error('Error rejecting team:', err);
+      setError('Failed to reject team. Please try again.');
+    }
   };
   
   const getStatusBadge = (status: TeamStatus) => {
@@ -192,15 +258,27 @@ const Admin = () => {
                 <Shield className="w-4 h-4 text-primary" />
                 <span className="font-inter text-sm text-foreground/70">Admin Portal</span>
               </div>
-              <motion.button
-                onClick={handleLogout}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-ice border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="font-inter text-sm">Logout</span>
-              </motion.button>
+              <div className="flex items-center gap-2">
+                <motion.button
+                  onClick={loadTeams}
+                  disabled={isLoading}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-ice border border-ice-cyan/30 text-primary hover:bg-ice-cyan/10 transition-colors disabled:opacity-50"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  <span className="font-inter text-sm">Refresh</span>
+                </motion.button>
+                <motion.button
+                  onClick={handleLogout}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-ice border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="font-inter text-sm">Logout</span>
+                </motion.button>
+              </div>
             </div>
             <h1 className="font-space text-4xl md:text-5xl text-glacier-deep font-bold mb-4">
               Control <span className="text-transparent bg-clip-text bg-gradient-to-r from-ice-cyan to-holo-purple">Room</span>
@@ -209,6 +287,16 @@ const Admin = () => {
               Manage team registrations and approvals
             </p>
           </motion.div>
+          
+          {error && (
+            <motion.div
+              className="mb-6 p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              {error}
+            </motion.div>
+          )}
         
         {/* Search and Stats */}
         <motion.div
@@ -244,7 +332,7 @@ const Admin = () => {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-foreground/40" />
             <input
               type="text"
-              placeholder="Search teams by name, ID, or captain..."
+              placeholder="Search teams by name, Team ID, or captain..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="input-frost pl-12 w-full"
@@ -259,6 +347,19 @@ const Admin = () => {
           transition={{ delay: 0.3 }}
         >
           <GlassCard className="overflow-hidden" variant="diamond" hover3D={false}>
+            {isLoading && (
+              <div className="p-8 text-center">
+                <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+                <p className="font-inter text-foreground/60">Loading teams...</p>
+              </div>
+            )}
+            {!isLoading && teams.length === 0 && (
+              <div className="p-8 text-center">
+                <Users className="w-8 h-8 mx-auto mb-4 text-foreground/40" />
+                <p className="font-inter text-foreground/60">No team registrations found.</p>
+              </div>
+            )}
+            {!isLoading && teams.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -285,7 +386,7 @@ const Admin = () => {
                           <span className="text-2xl">{team.avatar}</span>
                           <div>
                             <p className="font-inter font-medium text-foreground">{team.name}</p>
-                            <p className="font-inter text-xs text-foreground/50">{team.id}</p>
+                          <p className="font-inter text-xs text-foreground/50">{team.teamId}</p>
                           </div>
                         </div>
                       </td>
@@ -334,6 +435,7 @@ const Admin = () => {
                 </tbody>
               </table>
             </div>
+            )}
           </GlassCard>
         </motion.div>
         
@@ -360,7 +462,7 @@ const Admin = () => {
                       <span className="text-4xl">{selectedTeam.avatar}</span>
                       <div>
                         <h3 className="font-space text-xl text-glacier-deep font-bold">{selectedTeam.name}</h3>
-                        <p className="font-inter text-sm text-foreground/50">{selectedTeam.id}</p>
+                        <p className="font-inter text-sm text-foreground/50">{selectedTeam.teamId}</p>
                       </div>
                     </div>
                     <motion.button
@@ -382,17 +484,32 @@ const Admin = () => {
                       <span className="font-inter text-foreground/60">Team Size</span>
                       <span className="font-inter font-medium text-foreground">{selectedTeam.members} members</span>
                     </div>
+                    {selectedTeam.projectTitle && (
+                      <div className="flex justify-between py-2 border-b border-border">
+                        <span className="font-inter text-foreground/60">Project Title</span>
+                        <span className="font-inter font-medium text-foreground">{selectedTeam.projectTitle}</span>
+                      </div>
+                    )}
+                    {selectedTeam.domain && (
+                      <div className="flex justify-between py-2 border-b border-border">
+                        <span className="font-inter text-foreground/60">Domain</span>
+                        <span className="font-inter font-medium text-foreground">{selectedTeam.domain}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between py-2 border-b border-border">
                       <span className="font-inter text-foreground/60">Status</span>
                       {getStatusBadge(selectedTeam.status)}
                     </div>
                   </div>
                   
-                  {/* ID Card Preview Placeholder */}
-                  <div className="p-8 rounded-xl bg-gradient-to-br from-ice-frost to-white border border-border text-center mb-6">
-                    <p className="font-inter text-sm text-foreground/50">ID Card Preview</p>
-                    <p className="font-inter text-xs text-foreground/30 mt-1">(Would display uploaded ID here)</p>
-                  </div>
+                  {selectedTeam.projectIdea && (
+                    <div className="mb-6">
+                      <h4 className="font-inter text-sm font-medium text-foreground/60 mb-2">Project Idea</h4>
+                      <div className="p-4 rounded-lg bg-ice-frost/30 border border-border">
+                        <p className="font-inter text-sm text-foreground">{selectedTeam.projectIdea}</p>
+                      </div>
+                    </div>
+                  )}
                   
                   {selectedTeam.status === 'pending' && (
                     <div className="flex gap-3">
